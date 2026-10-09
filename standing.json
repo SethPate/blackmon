@@ -1,0 +1,357 @@
+[
+ {
+  "title": "The Met: open",
+  "venue": "The Metropolitan Museum of Art",
+  "street": "1000 Fifth Avenue",
+  "city": "Manhattan",
+  "url": "https://www.metmuseum.org/plan-your-visit",
+  "note": "Adults $30, seniors $22, students $17, children 12 and under free; closed Wednesdays, Thanksgiving, December 25, January 1 and the first Monday in May. New York State residents and NY, NJ and CT students choose their own price (1 cent minimum) with ID; NJ and CT students must buy in person.",
+  "when": [
+   {
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "thu"
+    ],
+    "start": "10:00",
+    "end": "17:00"
+   },
+   {
+    "days": [
+     "fri",
+     "sat"
+    ],
+    "start": "10:00",
+    "end": "21:00"
+   }
+  ],
+  "quote": "Sunday 10 am–5 pm Monday 10 am–5 pm Tuesday 10 am–5 pm Wednesday Closed Thursday 10 am–5 pm Friday 10 am–9 pm Saturday 10 am–9 pm",
+  "lat": 40.779393,
+  "lon": -73.963409
+ },
+ {
+  "title": "The Met: open late",
+  "venue": "The Metropolitan Museum of Art",
+  "street": "1000 Fifth Avenue",
+  "city": "Manhattan",
+  "url": "https://www.metmuseum.org/plan-your-visit",
+  "note": "On Fridays and Saturdays the museum stays open until 9 pm instead of 5 pm, at normal admission.",
+  "when": [
+   {
+    "days": [
+     "fri",
+     "sat"
+    ],
+    "start": "17:00",
+    "end": "21:00"
+   }
+  ],
+  "quote": "Friday 10 am–9 pm Saturday 10 am–9 pm",
+  "lat": 40.779393,
+  "lon": -73.963409
+ },
+ {
+  "title": "MoMA PS1: open",
+  "venue": "MoMA PS1",
+  "street": "22-25 Jackson Avenue",
+  "city": "Queens",
+  "url": "https://www.momaps1.org/en/visit",
+  "note": "Admission is free for everyone; closed Tuesdays and Wednesdays and on Thanksgiving, Christmas and New Year's Day.",
+  "when": [
+   {
+    "days": [
+     "mon",
+     "thu",
+     "fri",
+     "sun"
+    ],
+    "start": "12:00",
+    "end": "18:00"
+   },
+   {
+    "days": [
+     "sat"
+    ],
+    "start": "10:00",
+    "end": "18:00"
+   }
+  ],
+  "quote": "Open 12–6 p.m. Sat open 10 a.m. Closed Tue and Wed",
+  "lat": 40.745592,
+  "lon": -73.946932
+ },
+ {
+  "title": "Museum of the Moving Image: open",
+  "venue": "Museum of the Moving Image",
+  "street": "36-01 35 Avenue (at 37 Street)",
+  "city": "Queens",
+  "url": "https://movingimage.org/visit/",
+  "note": "Adults $20, seniors and students $12, youth 3-17 $10, under 3 free; open Thursday to Sunday only.",
+  "when": [
+   {
+    "days": [
+     "thu"
+    ],
+    "start": "14:00",
+    "end": "18:00"
+   },
+   {
+    "days": [
+     "fri"
+    ],
+    "start": "14:00",
+    "end": "20:00"
+   },
+   {
+    "days": [
+     "sat",
+     "sun"
+    ],
+    "start": "11:00",
+    "end": "18:00"
+   }
+  ],
+  "quote": "MUSEUM HOURS THURSDAY 2:00–6:00 P.M. FRIDAY 2:00–8:00 P.M. SATURDAY & SUNDAY 11:00 A.M.–6:00 P.M.",
+  "lat": 40.756305,
+  "lon": -73.923916
+ },
+ {
+  "title": "Museum of the Moving Image: free Thursdays",
+  "venue": "Museum of the Moving Image",
+  "street": "36-01 35 Avenue (at 37 Street)",
+  "city": "Queens",
+  "url": "https://movingimage.org/visit/",
+  "note": "Free gallery admission for everyone every Thursday afternoon.",
+  "when": [
+   {
+    "days": [
+     "thu"
+    ],
+    "start": "14:00",
+    "end": "18:00"
+   }
+  ],
+  "quote": "Free Museum hours every Thursday, 2:00–6:00 p.m.",
+  "lat": 40.756305,
+  "lon": -73.923916
+ },
+ {
+  "title": "Museum of the Moving Image: open late",
+  "venue": "Museum of the Moving Image",
+  "street": "36-01 35 Avenue (at 37 Street)",
+  "city": "Queens",
+  "url": "https://movingimage.org/visit/",
+  "note": "Fridays the museum stays open until 8 pm, two hours later than other days, at normal admission.",
+  "when": [
+   {
+    "days": [
+     "fri"
+    ],
+    "start": "18:00",
+    "end": "20:00"
+   }
+  ],
+  "quote": "FRIDAY 2:00–8:00 P.M.",
+  "lat": 40.756305,
+  "lon": -73.923916
+ },
+ {
+  "title": "Neue Galerie: open",
+  "venue": "Neue Galerie New York",
+  "street": "1048 Fifth Avenue (at 86th Street)",
+  "city": "Manhattan",
+  "url": "https://www.neuegalerie.org/visit",
+  "note": "Galleries are closed for construction and reopen November 12, 2026; then $28 general, $18 seniors, $15 students, last entry 5:30 pm, closed Tuesdays.",
+  "when": [
+   {
+    "days": [
+     "mon",
+     "wed",
+     "thu",
+     "fri",
+     "sat",
+     "sun"
+    ],
+    "start": "10:00",
+    "end": "18:00"
+   }
+  ],
+  "quote": "Reopening November 12: Museum Monday, Wednesday–Sunday, 10 a.m. to 6 p.m. (Closed Tuesday)",
+  "valid_from": "2026-11-12",
+  "lat": 40.781227,
+  "lon": -73.960228
+ },
+ {
+  "title": "Neue Galerie: free First Fridays",
+  "venue": "Neue Galerie New York",
+  "street": "1048 Fifth Avenue (at 86th Street)",
+  "city": "Manhattan",
+  "url": "https://www.neuegalerie.org/visit",
+  "note": "Free admission and late opening on the first Friday of the month, first come first served; galleries are closed until November 12, 2026, and another line on the page says only 'select Fridays', so check before going.",
+  "when": [
+   {
+    "days": [
+     "fri"
+    ],
+    "start": "17:00",
+    "end": "20:00",
+    "nth": [
+     1
+    ]
+   }
+  ],
+  "quote": "The Neue Galerie is delighted to offer First Fridays, granting free admission to the museum from 5 to 8 p.m. on the first Friday of each month.",
+  "valid_from": "2026-11-12",
+  "lat": 40.781227,
+  "lon": -73.960228
+ },
+ {
+  "title": "Met Opera: $25 rush tickets",
+  "venue": "Metropolitan Opera",
+  "street": "30 Lincoln Center Plaza",
+  "city": "Manhattan",
+  "url": "https://www.metopera.org/season/tickets/rush-tickets/",
+  "note": "$25 same-day tickets sold online only, first come first served, on sale at noon for Monday-Friday evenings, 2 pm for Saturday evenings and four hours before curtain for matinees; up to two tickets per seven days, not offered for every performance, and they often sell out in minutes.",
+  "when": [
+   {
+    "days": [
+     "mon",
+     "tue",
+     "wed",
+     "thu",
+     "fri"
+    ],
+    "start": "12:00",
+    "end": null
+   },
+   {
+    "days": [
+     "sat"
+    ],
+    "start": "14:00",
+    "end": null
+   }
+  ],
+  "quote": "Rush tickets go on sale for Monday through Friday evening performances at noon, for matinees four hours before curtain, and for Saturday evenings at 2:00 pm.",
+  "lat": 40.772859,
+  "lon": -73.984775
+ },
+ {
+  "title": "TKTS Times Square: discount booth",
+  "venue": "TKTS Times Square",
+  "street": "Broadway at W 47th St",
+  "city": "Manhattan",
+  "url": "https://www.tdf.org/discount-ticket-programs/tkts-by-tdf/tkts-live/",
+  "note": "Same-day and next-day-matinee Broadway and Off-Broadway tickets up to 50% off, bought in person, plus an $8 per-ticket service charge.",
+  "when": [
+   {
+    "days": [
+     "mon",
+     "tue",
+     "fri"
+    ],
+    "start": "15:00",
+    "end": "20:00"
+   },
+   {
+    "days": [
+     "wed",
+     "thu",
+     "sat",
+     "sun"
+    ],
+    "start": "11:00",
+    "end": "20:00"
+   }
+  ],
+  "quote": "Monday: 3:00 PM – 8:00 PM Tuesday: 3:00 PM – 8:00 PM Wednesday: 11:00 AM – 8:00 PM Thursday: 11:00 AM – 8:00 PM Friday: 3:00 PM – 8:00 PM Saturday: 11:00 AM – 8:00 PM Sunday: 11:00 AM – 8:00 PM",
+  "lat": 40.75883,
+  "lon": -73.984292
+ },
+ {
+  "title": "TKTS Lincoln Center: discount booth",
+  "venue": "TKTS Lincoln Center",
+  "street": "61 W 62nd St",
+  "city": "Manhattan",
+  "url": "https://www.tdf.org/discount-ticket-programs/tkts-by-tdf/tkts-live/",
+  "note": "Same-day and next-day-matinee theatre tickets up to 50% off, bought in person, plus an $8 per-ticket service charge; closed Sundays and Mondays.",
+  "when": [
+   {
+    "days": [
+     "tue",
+     "wed",
+     "thu",
+     "fri",
+     "sat"
+    ],
+    "start": "11:00",
+    "end": "18:00"
+   }
+  ],
+  "quote": "Monday: CLOSED Tuesday: 11:00 AM – 6:00 PM Wednesday: 11:00 AM – 6:00 PM Thursday: 11:00 AM – 6:00 PM Friday: 11:00 AM – 6:00 PM Saturday: 11:00 AM – 6:00 PM Sunday: CLOSED",
+  "lat": 40.771127,
+  "lon": -73.982835
+ },
+ {
+  "title": "Peter McManus Cafe: open",
+  "venue": "Peter McManus Cafe",
+  "street": "152 7th Avenue",
+  "city": "Manhattan",
+  "url": "https://www.mcmanus.nyc",
+  "note": "Family-run bar since 1936, open noon to 4 AM every day; kitchen closes at midnight Sunday-Wednesday and 1 AM Thursday-Saturday.",
+  "when": [
+   {
+    "days": [
+     "mon",
+     "tue",
+     "wed",
+     "thu",
+     "fri",
+     "sat",
+     "sun"
+    ],
+    "start": "12:00",
+    "end": "04:00",
+    "ends_next_day": true
+   }
+  ],
+  "quote": "We are open 7 days a week: 12PM — 4AM",
+  "lat": 40.741871,
+  "lon": -73.997645
+ },
+ {
+  "title": "McSorley's Old Ale House: open",
+  "venue": "McSorley's Old Ale House",
+  "street": "15 East 7th Street",
+  "city": "Manhattan",
+  "url": "https://mcsorleysoldalehouse.nyc",
+  "note": "Historic ale house; cash only.",
+  "when": [
+   {
+    "days": [
+     "mon",
+     "tue",
+     "wed",
+     "thu",
+     "fri",
+     "sat"
+    ],
+    "start": "11:00",
+    "end": "01:00",
+    "ends_next_day": true
+   },
+   {
+    "days": [
+     "sun"
+    ],
+    "start": "12:00",
+    "end": "01:00",
+    "ends_next_day": true
+   }
+  ],
+  "quote": "Mon – Sat 11 AM – 1 AM Sun — 12 PM – 1 AM. Cash Only!",
+  "lat": 40.728822,
+  "lon": -73.989664
+ }
+]
