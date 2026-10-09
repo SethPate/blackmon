@@ -4,13 +4,13 @@
     python3 fetch.py               today (America/New_York)
     python3 fetch.py 2026-10-10    another day
 
-STARTER FEED, not the real pipeline: it reads only pages that publish schema.org Event data in the HTML
-(Songkick's NYC listing plus a few venue calendars), so it is concert-heavy and has no theater, dance,
-opera, film or readings yet. Every source reports how many events it gave, so a silent failure shows.
+Concerts come from pages that publish schema.org Event data in the HTML (Songkick's NYC listing plus a few
+venue calendars). Theater, dance, opera, film and the fringe houses come from sources.py. Every source reports
+how many events it gave, so a silent failure shows.
 """
 import datetime, gzip, json, os, re, sys, urllib.request, zoneinfo
 
-import routes
+import routes, sources
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, 'data')
@@ -114,10 +114,18 @@ def normalize(e, source, P):
                 venue=venue, street=street, city=city, lat=lat, lon=lon, pinned=pinned,
                 acts=[a for a in acts if a.lower() not in title.lower()][:4],
                 url=(e.get('url') or '').split('?utm_')[0], source=source,
+                kind='comedy' if 'Comedy' in str(e.get('@type')) else 'music',
                 cancelled='Cancel' in str(e.get('eventStatus')))
 
 
-def fetch(date):
+def is_pinned(e, P):
+    nv = norm(e['venue'])
+    return any(norm(p['name']) == nv or routes.km(e['lat'], e['lon'], p['lat'], p['lon']) < 0.07 for p in P)
+
+
+def fetch(date, extra=None, extra_report=None):
+    """extra / extra_report: that day's events and report lines from sources.collect(), when the caller has
+    already fetched a range of days in one go. Left out, this fetches them for the one day."""
     P = pins()
     report, events = [], []
 
@@ -146,13 +154,26 @@ def fetch(date):
     for name, url in VENUE_PAGES:
         take(name, url)
 
+    if extra is None:
+        ev, rp = sources.collect([date])
+        extra, extra_report = ev[date.isoformat()], rp[date.isoformat()]
+    report.extend(extra_report or [])
+    for e in extra:
+        if routes.km(e['lat'], e['lon'], 40.7306, -73.9866) <= MAX_KM:
+            events.append(dict(e, pinned=is_pinned(e, P), cancelled=False))
+
+    # The same performance can arrive from a house's own ticketing and from an aggregator. Keep the house's.
+    rank = lambda e: 2 if e['source'] == 'TodayTix' else 1 if e['source'] == 'Songkick' else 0
     seen, out = {}, []
-    for e in sorted(events, key=lambda e: (e['time'] or '99:99', e['venue'], e['source'] != 'Songkick')):
-        k = (norm(e['venue']), e['time'], norm(e['title'])[:12])
-        k2 = (norm(e['venue']), e['time'])
-        if k in seen or (k2 in seen and e['source'] != seen[k2]):
+    for e in sorted(events, key=lambda e: (e['time'] or '99:99', rank(e), e['venue'])):
+        cell = (round(e['lat'] / 0.0015), round(e['lon'] / 0.002), e['time'])
+        same = [o for o in seen.get(cell, []) if o['source'] != e['source'] and
+                (norm(o['venue']) == norm(e['venue']) or norm(o['title'])[:8] == norm(e['title'])[:8])]
+        exact = [o for o in seen.get(cell, []) if o['source'] == e['source'] and norm(o['venue']) == norm(e['venue'])
+                 and norm(o['title'])[:12] == norm(e['title'])[:12]]
+        if same or exact:
             continue
-        seen[k] = seen[k2] = e['source']
+        seen.setdefault(cell, []).append(e)
         e['id'] = f"{e['date']}|{norm(e['venue'])}|{e['time'] or ''}|{norm(e['title'])[:24]}"
         del e['cancelled']
         out.append(e)
@@ -170,5 +191,7 @@ if __name__ == '__main__':
     doc = fetch(d)
     for r in doc['sources']:
         print(r)
-    print(len(doc['events']), 'events on', doc['date'], '|', sum(e['pinned'] for e in doc['events']), 'at pinned venues',
-          '|', sum(e['time'] is None for e in doc['events']), 'with no time')
+    import collections
+    print(len(doc['events']), 'events on', doc['date'], '|', sum(e['pinned'] for e in doc['events']), 'at saved venues',
+          '|', sum(e['time'] is None for e in doc['events']), 'with no time', '|',
+          dict(collections.Counter(e['kind'] for e in doc['events'])))

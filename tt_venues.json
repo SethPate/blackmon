@@ -1,0 +1,758 @@
+{
+"16655": {
+"city": "New York",
+"lat": 40.72645,
+"lon": -73.9904,
+"name": "La MaMa Experimental Theatre Club",
+"street": "66 East 4th Street"
+},
+"54-below": {
+"city": "New York",
+"lat": 40.76441625205829,
+"lon": -73.98369999999998,
+"name": "54 Below",
+"street": "254 West 54th Street"
+},
+"59e59-theaters": {
+"city": "New York",
+"lat": 40.76330998151273,
+"lon": -73.97046973743439,
+"name": "59E59 Theaters",
+"street": "59 East 59th Street"
+},
+"59e59-theaters-theater-a": {
+"city": "New York",
+"lat": 40.76329,
+"lon": -73.9704,
+"name": "59E59 Theaters - Theater A",
+"street": "59 East 59th Street"
+},
+"59e59-theaters-theater-c": {
+"city": "New York",
+"lat": 40.76330998151273,
+"lon": -73.97046973743439,
+"name": "59E59 Theaters",
+"street": "59 East 59th Street"
+},
+"92ny-buttenwieser-hall": {
+"city": "New York",
+"lat": 40.78293,
+"lon": -73.9525,
+"name": "92NY Buttenwieser Hall",
+"street": "1395 Lexington Avenue"
+},
+"al-hirschfeld-theatre": {
+"city": "New York",
+"lat": 40.7592576,
+"lon": -73.9892011,
+"name": "Al Hirschfeld Theatre",
+"street": "302 West 45th Street"
+},
+"alice-tully-hall": {
+"city": "New York",
+"lat": 40.7737,
+"lon": -73.9826,
+"name": "Alice Tully Hall",
+"street": "1941 Broadway"
+},
+"ambassador-theatre": {
+"city": "New York",
+"lat": 40.76126240000001,
+"lon": -73.9850343,
+"name": "Ambassador Theatre",
+"street": "219 West 49th Street"
+},
+"anne-l-bernstein-theater": {
+"city": "New York",
+"lat": 40.76149,
+"lon": -73.9845,
+"name": "Anne L. Bernstein Theater",
+"street": "210 West 50th Street"
+},
+"apollo-theater": {
+"city": "New York",
+"lat": 40.810033,
+"lon": -73.9500391,
+"name": "Apollo Theater",
+"street": "253 West 125th Street"
+},
+"astor-place-theatre": {
+"city": "New York",
+"lat": 40.7294274,
+"lon": -73.9923919,
+"name": "Astor Place Theatre",
+"street": "434 Lafayette Street"
+},
+"asylum-nyc": {
+"city": "New York",
+"lat": 40.740617404723935,
+"lon": -73.98467189550514,
+"name": "Asylum NYC",
+"street": "123 E 24th Street"
+},
+"august-wilson-theatre": {
+"city": "New York",
+"lat": 40.76333,
+"lon": -73.9842,
+"name": "August Wilson Theatre",
+"street": "245 West 52nd Street"
+},
+"barrymore-theatre": {
+"city": "New York",
+"lat": 40.7601399,
+"lon": -73.9861712,
+"name": "Barrymore Theatre",
+"street": "243 West 47th Street"
+},
+"belasco-theatre": {
+"city": "New York",
+"lat": 40.7566076,
+"lon": -73.9840187,
+"name": "Belasco Theatre",
+"street": "111 West 44th Street"
+},
+"bernard-b-jacobs-theatre": {
+"city": "New York",
+"lat": 40.7586364,
+"lon": -73.98778879999999,
+"name": "Bernard B. Jacobs Theatre",
+"street": "242 West 45th Street"
+},
+"black-box-theatre-at-harold-and-miriam-steinberg-center-for-theatre": {
+"city": "New York",
+"lat": 40.7579,
+"lon": -73.9829,
+"name": "Black Box Theatre at Harold and Miriam Steinberg Center for Theatre",
+"street": "111 W 46th St l4"
+},
+"booth-theatre": {
+"city": "New York",
+"lat": 40.7584168,
+"lon": -73.9868987,
+"name": "Booth Theatre",
+"street": "222 West 45th Street"
+},
+"broadhurst-theatre": {
+"city": "New York",
+"lat": 40.7582588,
+"lon": -73.9875524,
+"name": "Broadhurst Theatre",
+"street": "235 West 44th Street"
+},
+"broadway-theatre": {
+"city": "New York",
+"lat": 40.76324,
+"lon": -73.9831,
+"name": "Broadway Theatre",
+"street": "1681 Broadway"
+},
+"cherry-lane-theatre": {
+"city": "New York",
+"lat": 40.7313475609116,
+"lon": -74.00538507242203,
+"name": "Cherry Lane Theatre",
+"street": "38 Commerce St."
+},
+"circle-in-the-square-theatre": {
+"city": "New York",
+"lat": 40.76198,
+"lon": -73.985,
+"name": "Circle in the Square Theatre",
+"street": "235 West 50th Street"
+},
+"classic-stage-company": {
+"city": "New York",
+"lat": 40.73265,
+"lon": -73.9884,
+"name": "Classic Stage Company",
+"street": "136 East 13th Street"
+},
+"daryl-roth-theatre": {
+"city": "New York",
+"lat": 40.735322518345185,
+"lon": -73.98943947486877,
+"name": "Daryl Roth Theatre",
+"street": "101 E 15th St"
+},
+"dr2-theatre": {
+"city": "New York",
+"lat": 40.735309,
+"lon": -73.989664,
+"name": "DR2 Theatre",
+"street": "103 E 15th St"
+},
+"drom": {
+"city": "New York",
+"lat": 40.72525,
+"lon": -73.9844,
+"name": "Drom",
+"street": "85 Avenue A"
+},
+"duke-on-42nd-street": {
+"city": "New York",
+"lat": 40.75677,
+"lon": -73.9882,
+"name": "Duke on 42nd Street",
+"street": "229 West 42nd Street"
+},
+"eugene-o-neill-theatre": {
+"city": "New York",
+"lat": 40.76108,
+"lon": -73.9857,
+"name": "Eugene O’Neill Theatre",
+"street": "230 West 49th Street"
+},
+"gerald-schoenfeld-theatre": {
+"city": "New York",
+"lat": 40.7584853,
+"lon": -73.9873619,
+"name": "Gerald Schoenfeld Theatre ",
+"street": "236 West 45th Street"
+},
+"gershwin-theatre": {
+"city": "New York",
+"lat": 40.76238,
+"lon": -73.9853,
+"name": "Gershwin Theatre",
+"street": "222 West 51st Street"
+},
+"golden-theatre": {
+"city": "New York",
+"lat": 40.7587,
+"lon": -73.988,
+"name": "Golden Theatre",
+"street": "252 West 45th Street"
+},
+"greenwich-house-theater": {
+"city": "New York",
+"lat": 40.73227,
+"lon": -74.003,
+"name": "Greenwich House Theater ",
+"street": "27 Barrow Street"
+},
+"hayes-theater": {
+"city": "New York",
+"lat": 40.7578348,
+"lon": -73.9878269,
+"name": "Hayes Theater",
+"street": "240 West 44th Street"
+},
+"hudson-theatre": {
+"city": "New York",
+"lat": 40.75691,
+"lon": -73.9846,
+"name": "Hudson Theatre",
+"street": "141 West 44th Street"
+},
+"imperial-theatre": {
+"city": "New York",
+"lat": 40.75897,
+"lon": -73.9873,
+"name": "Imperial Theatre",
+"street": "249 West 45th Street"
+},
+"james-earl-jones-theatre": {
+"city": "New York",
+"lat": 40.75915,
+"lon": -73.983,
+"name": "James Earl Jones Theatre",
+"street": "138 West 48th Street"
+},
+"jerry-orbach-theatre": {
+"city": "New York",
+"lat": 40.76145,
+"lon": -73.9845,
+"name": "Jerry Orbach Theatre",
+"street": "210 W. 50th St. 3rd Floor"
+},
+"kogame": {
+"city": "New York",
+"lat": 40.72541,
+"lon": -73.9872,
+"name": "Kogame",
+"street": "67 First Avenue - Entrance on East 4th Street"
+},
+"lena-horne-theatre": {
+"city": "New York",
+"lat": 40.7599414,
+"lon": -73.98690909999999,
+"name": "Lena Horne Theatre",
+"street": "256 West 47th Street"
+},
+"lincoln-center-claire-tow-theater": {
+"city": "New York",
+"lat": 40.77355,
+"lon": -73.9839,
+"name": "Lincoln Center Theater - Claire Tow Theater",
+"street": "150 West 65th Street"
+},
+"lincoln-center-mitzi-e-newhouse-theater": {
+"city": "New York",
+"lat": 40.77355,
+"lon": -73.9839,
+"name": "Lincoln Center Theater - Mitzi E. Newhouse Theater",
+"street": "150 West 65th Street"
+},
+"linda-gross-theater": {
+"city": "New York",
+"lat": 40.743997863704294,
+"lon": -74.00151877546308,
+"name": "Atlantic Theater Company - Linda Gross Theater",
+"street": "336 West 20th Street"
+},
+"longacre-theatre": {
+"city": "New York",
+"lat": 40.76034,
+"lon": -73.9859,
+"name": "Longacre Theatre",
+"street": "220 West 48th Street"
+},
+"lucille-lortel-theatre": {
+"city": "New York",
+"lat": 40.73341,
+"lon": -74.0057,
+"name": "Lucille Lortel Theatre",
+"street": "121 Christopher Street"
+},
+"lunt-fontanne-theatre": {
+"city": "New York",
+"lat": 40.75918,
+"lon": -73.9858,
+"name": "Lunt-Fontanne Theatre",
+"street": "205 West 46th Street"
+},
+"lyceum-theatre-ny": {
+"city": "New York",
+"lat": 40.75774,
+"lon": -73.9845,
+"name": "Lyceum Theatre ",
+"street": "149 West 45th Street"
+},
+"lyric-theatre-ny": {
+"city": "New York",
+"lat": 40.757,
+"lon": -73.9873,
+"name": "Lyric Theatre",
+"street": "214 W 43rd St"
+},
+"majestic-theatre": {
+"city": "New York",
+"lat": 40.75841,
+"lon": -73.9881,
+"name": "Majestic Theatre ",
+"street": "245 West 44th Street"
+},
+"marquis-theatre": {
+"city": "New York",
+"lat": 40.75858,
+"lon": -73.9858,
+"name": "Marquis Theatre",
+"street": "1535 Broadway"
+},
+"masquerade": {
+"city": "New York",
+"lat": 40.76572,
+"lon": -73.9812,
+"name": "Masquerade",
+"street": "218 W 57th St"
+},
+"mcc-theater": {
+"city": "New York",
+"lat": 40.76650333144333,
+"lon": -73.99157600059434,
+"name": "The Robert W. Wilson MCC Theater Space",
+"street": "511 West 52nd Street"
+},
+"mcginncazale-theater": {
+"city": "New York",
+"lat": 40.781858433639165,
+"lon": -73.98052571296692,
+"name": "WP Theater - McGinn/Cazale Theater",
+"street": "2162 Broadway"
+},
+"minetta-lane-theatre": {
+"city": "New York",
+"lat": 40.730415446727406,
+"lon": -74.00117241964338,
+"name": "Minetta Lane Theatre",
+"street": "18 Minetta Lane"
+},
+"minskoff-theatre": {
+"city": "New York",
+"lat": 40.75802,
+"lon": -73.986,
+"name": "Minskoff Theatre",
+"street": "200 West 45th Street"
+},
+"music-box-theatre": {
+"city": "New York",
+"lat": 40.75888,
+"lon": -73.987,
+"name": "Music Box Theatre",
+"street": "239 West 45th Street"
+},
+"nederlander-theatre": {
+"city": "New York",
+"lat": 40.7555,
+"lon": -73.9882,
+"name": "Nederlander Theatre",
+"street": "208 West 41st Street"
+},
+"neil-simon-theatre": {
+"city": "New York",
+"lat": 40.76317,
+"lon": -73.9845,
+"name": "Neil Simon Theatre",
+"street": "250 West 52nd Street"
+},
+"new-amsterdam-theatre": {
+"city": "New York",
+"lat": 40.75606,
+"lon": -73.9878,
+"name": "New Amsterdam Theatre",
+"street": "214 West 42nd Street"
+},
+"new-world-stages": {
+"city": "New York",
+"lat": 40.7628267,
+"lon": -73.987646,
+"name": "New World Stages",
+"street": "340 West 50th Street"
+},
+"new-york-city-center": {
+"city": "New York",
+"lat": 40.763889859972544,
+"lon": -73.97950460615158,
+"name": "New York City Center",
+"street": "131 W 55th St"
+},
+"new-york-comedy-club-east-village": {
+"city": "New York",
+"lat": 40.72662,
+"lon": -73.9897,
+"name": "New York Comedy Club (East Village)",
+"street": "85 E 4th St"
+},
+"new-york-comedy-club-upper-west-side": {
+"city": "New York",
+"lat": 40.78291,
+"lon": -73.9801,
+"name": "New York Comedy Club - Upper West Side",
+"street": "236 W 78th Street"
+},
+"new-york-theatre-workshop": {
+"city": "New York",
+"lat": 40.72667,
+"lon": -73.99,
+"name": "New York Theatre Workshop",
+"street": "79 East 4th Street"
+},
+"one-times-square": {
+"city": "New York",
+"lat": 40.7562,
+"lon": -73.9865,
+"name": "One Times Square",
+"street": "1475 Broadway"
+},
+"orpheum-theatre": {
+"city": "New York",
+"lat": 40.7282078,
+"lon": -73.9875308,
+"name": "Orpheum Theatre",
+"street": "126 Second Avenue"
+},
+"pac-nyc": {
+"city": "New York",
+"lat": 40.71243,
+"lon": -74.0123,
+"name": "Perelman Performing Arts Center (PAC NYC)",
+"street": "251 Fulton Street"
+},
+"palace-theatre-ny": {
+"city": "New York",
+"lat": 40.75877,
+"lon": -73.9841,
+"name": "Palace Theatre",
+"street": "160 W 47th St"
+},
+"paradise-club-at-the-times-square-edition-hotel": {
+"city": "New York",
+"lat": 40.7593,
+"lon": -73.9842,
+"name": "Paradise Club at the Times Square Edition Hotel",
+"street": "20 Times Square, - 701 7th Ave"
+},
+"paradise-factory-theater": {
+"city": "New York",
+"lat": 40.72643,
+"lon": -73.9906,
+"name": "Paradise Factory Theater",
+"street": "64 East 4th Street"
+},
+"park-avenue-armory": {
+"city": "New York",
+"lat": 40.767093737547206,
+"lon": -73.96530688095093,
+"name": "Park Avenue Armory",
+"street": "643 Park Avenue"
+},
+"pershing-square-signature-center": {
+"city": "New York",
+"lat": 40.75929250662626,
+"lon": -73.99510192394257,
+"name": "Pershing Square Signature Center",
+"street": "480 West 42nd Street"
+},
+"peter-jay-sharp-theatre-at-symphony-space": {
+"city": "New York",
+"lat": 40.79396,
+"lon": -73.9726,
+"name": "Peter Jay Sharp Theatre at Symphony Space",
+"street": "2537 Broadway"
+},
+"playwrights-horizons": {
+"city": "New York",
+"lat": 40.75859,
+"lon": -73.9936,
+"name": "Playwrights Horizons",
+"street": "416 West 42nd Street"
+},
+"public-theater": {
+"city": "New York",
+"lat": 40.72901,
+"lon": -73.9917,
+"name": "Public Theater",
+"street": "425 Lafayette Street"
+},
+"repertorio-espanol": {
+"city": "New York",
+"lat": 40.741645,
+"lon": -73.982596,
+"name": "Repertorio Español / Spanish Theatre Repertory",
+"street": "138 East 27th Street"
+},
+"richard-rodgers-theatre": {
+"city": "New York",
+"lat": 40.75898,
+"lon": -73.9867,
+"name": "Richard Rodgers Theatre",
+"street": "226 W. 46th Street"
+},
+"riseny": {
+"city": "New York",
+"lat": 40.757687046553315,
+"lon": -73.98518046627045,
+"name": "RiseNY",
+"street": "160 W 45th St"
+},
+"rose-theater-jazz-at-lincoln-center": {
+"city": "New York",
+"lat": 40.705786,
+"lon": -74.013961,
+"name": "Rose Theater, Jazz at Lincoln Center",
+"street": "Broadway &, W 60th St"
+},
+"ruby-theatre": {
+"city": "New York",
+"lat": 40.752640189300216,
+"lon": -73.98416437301634,
+"name": "The Ruby Theatre",
+"street": "35 W 39th St"
+},
+"samuel-j-friedman-theatre": {
+"city": "New York",
+"lat": 40.76025,
+"lon": -73.9868,
+"name": "Samuel J. Friedman Theatre",
+"street": "261 West 47th Street"
+},
+"shubert-theatre": {
+"city": "New York",
+"lat": 40.75799,
+"lon": -73.9872,
+"name": "Shubert Theatre",
+"street": "225 West 44th Street"
+},
+"soho-playhouse": {
+"city": "New York",
+"lat": 40.72651678767852,
+"lon": -74.00438046627045,
+"name": "SoHo Playhouse",
+"street": "15 Vandam St"
+},
+"spit-n-vigor-tiny-baby-blackbox-theatre": {
+"city": "New York",
+"lat": 40.73021,
+"lon": -74.0006,
+"name": "spit&vigor's Tiny Baby Blackbox Theatre",
+"street": "115 MacDougal Street, 3C"
+},
+"st-anns-warehouse": {
+"city": "Brooklyn",
+"lat": 40.703674548715995,
+"lon": -73.99284499740601,
+"name": "St. Ann's Warehouse ",
+"street": "45 Water St"
+},
+"st-james-theatre": {
+"city": "New York",
+"lat": 40.7580606340383,
+"lon": -73.98831457672121,
+"name": "St. James Theatre",
+"street": "246 West 44th Street"
+},
+"stephen-sondheim-theatre": {
+"city": "New York",
+"lat": 40.75584,
+"lon": -73.9848,
+"name": "Stephen Sondheim Theatre",
+"street": "124 West 43rd Street"
+},
+"studio-54": {
+"city": "New York",
+"lat": 40.76435,
+"lon": -73.9837,
+"name": "Studio 54",
+"street": "254 West 54th Street"
+},
+"studio-seaview": {
+"city": "New York",
+"lat": 40.75825,
+"lon": -73.9896,
+"name": "Studio Seaview",
+"street": "305 West 43rd Street"
+},
+"superfine-dumbo": {
+"city": "Brooklyn",
+"lat": 40.70224,
+"lon": -73.9873,
+"name": "Superfine, Dumbo",
+"street": "126 Front St."
+},
+"the-club": {
+"city": "New York",
+"lat": 40.75059419999999,
+"lon": -74.0038776,
+"name": "The McKittrick Hotel",
+"street": "530 West 27th Street, 6th FL"
+},
+"the-marjorie-s-deane-little-theater": {
+"city": "New York",
+"lat": 40.77133,
+"lon": -73.9803,
+"name": "The Marjorie S. Deane Little Theater",
+"street": "10 West 64th Street"
+},
+"the-metropolitan-opera": {
+"city": "New York",
+"lat": 40.772748,
+"lon": -73.98384759999999,
+"name": "Metropolitan Opera House",
+"street": "30 Lincoln Center Plaza"
+},
+"the-night-egg-at-the-culture-club": {
+"city": "New York",
+"lat": 40.7507,
+"lon": -74.0037,
+"name": "The Night Egg at the Culture Club",
+"street": "530 West 27th Street"
+},
+"the-players-theatre": {
+"city": "New York",
+"lat": 40.7301811,
+"lon": -74.0007016,
+"name": "The Players Theatre",
+"street": "115 MacDougal Street"
+},
+"the-theater-center": {
+"city": "New York",
+"lat": 40.76145,
+"lon": -73.9845,
+"name": "The Theater Center",
+"street": "210 West 50th Street"
+},
+"the-west-end-theatre": {
+"city": "New York",
+"lat": 40.78896,
+"lon": -73.9772,
+"name": "The West End Theatre",
+"street": "263 W 86th St"
+},
+"the-wild-project": {
+"city": "New York",
+"lat": 40.722958131095496,
+"lon": -73.98335825033186,
+"name": "The Wild Project",
+"street": "195 E 3rd St"
+},
+"theater-at-st-jean": {
+"city": "New York",
+"lat": 40.77281,
+"lon": -73.9601,
+"name": "Theater at St. Jean",
+"street": "150 E 76th St"
+},
+"theater-at-st-jeans": {
+"city": "New York",
+"lat": 40.77281,
+"lon": -73.9601,
+"name": "Theater at St. Jean's",
+"street": "150 E. 76th Street"
+},
+"theatre-row-theatre-three": {
+"city": "New York",
+"lat": 40.75837,
+"lon": -73.9934,
+"name": "Theatre Row - Theatre Three",
+"street": "410 West 42nd Street"
+},
+"theatre-xiv": {
+"city": "Brooklyn",
+"lat": 40.70614,
+"lon": -73.9235,
+"name": "Théâtre XIV",
+"street": "383 Troutman Street"
+},
+"todd-haimes-theatre": {
+"city": "New York",
+"lat": 40.75677,
+"lon": -73.9881,
+"name": "Todd Haimes Theatre",
+"street": "227 West 42nd Street"
+},
+"vineyard-theatre": {
+"city": "New York",
+"lat": 40.73468625932611,
+"lon": -73.98897166137695,
+"name": "Vineyard Theatre",
+"street": "108 East 15th Street"
+},
+"vivian-beaumont-theater": {
+"city": "New York",
+"lat": 40.77378,
+"lon": -73.9843,
+"name": "Vivian Beaumont Theater - Lincoln Center Theater",
+"street": "150 West 65th Street"
+},
+"walter-kerr-theatre": {
+"city": "New York",
+"lat": 40.76071,
+"lon": -73.9856,
+"name": "Walter Kerr Theatre ",
+"street": "219 West 48th Street"
+},
+"westside-theatre": {
+"city": "New York",
+"lat": 40.75957229999999,
+"lon": -73.99250669999999,
+"name": "Westside Theatre",
+"street": "407 West 43rd Street"
+},
+"winter-garden-theatre": {
+"city": "New York",
+"lat": 40.76159,
+"lon": -73.9836,
+"name": "Winter Garden Theatre",
+"street": "1634 Broadway"
+}
+}
