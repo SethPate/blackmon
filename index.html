@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blackmon</title>
+<style>
+:root {
+  --bg: #f6f4ef; --card: #fffdf8; --ink: #1b1a17; --mute: #6f6a60; --line: #e2ddd1; --accent: #c8102e; --best: #1b1a17;
+  --chip: #efebe1;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #131210; --card: #1b1a17; --ink: #efeadf; --mute: #9a9488; --line: #2e2c27; --accent: #ff5a6e; --best: #fff; --chip: #26241f; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.4 -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 20px 16px 60px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 4px; }
+h1 { font-size: 26px; letter-spacing: -0.02em; margin: 0; font-weight: 800; }
+h1 span { color: var(--accent); }
+.day { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 17px; }
+button { font: inherit; color: inherit; background: var(--chip); border: 1px solid var(--line); border-radius: 6px; padding: 2px 9px; cursor: pointer; }
+button:hover { border-color: var(--mute); }
+button:disabled { opacity: .4; cursor: default; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; color: var(--mute); font-size: 13.5px; margin: 6px 0 16px; }
+.home b { color: var(--ink); font-weight: 600; }
+.home input { font: inherit; width: min(340px, 70vw); padding: 3px 7px; border: 1px solid var(--mute); border-radius: 6px; background: var(--card); color: var(--ink); }
+.err { color: var(--accent); }
+label { cursor: pointer; user-select: none; }
+.hour { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); margin: 18px 0 6px; }
+.ev { display: grid; grid-template-columns: 78px minmax(0, 1fr) auto; gap: 4px 14px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+.ev.past { opacity: .5; }
+.t { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.title { font-weight: 650; }
+.title a { color: inherit; text-decoration: none; }
+.title a:hover { text-decoration: underline; }
+.acts { color: var(--mute); font-weight: 400; }
+.where { color: var(--mute); font-size: 13.5px; overflow-wrap: anywhere; }
+.where b { color: var(--ink); font-weight: 600; }
+.pin { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-left: 6px; }
+.modes { display: grid; grid-template-columns: 62px 62px 230px; gap: 10px; font-size: 13px; color: var(--mute); }
+.mode .k { font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; }
+.mode .v { font-variant-numeric: tabular-nums; font-size: 15px; color: var(--ink); white-space: nowrap; }
+.mode.best .v { font-weight: 800; color: var(--best); }
+.mode.far .v { color: var(--mute); }
+.mode .d { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ln { display: inline-block; min-width: 18px; height: 18px; line-height: 18px; border-radius: 9px; text-align: center; font-size: 11px; font-weight: 800; color: #fff; padding: 0 4px; margin-left: 3px; vertical-align: 1px; }
+.empty, .foot { color: var(--mute); font-size: 13px; margin-top: 22px; }
+.foot span { white-space: nowrap; }
+@media (max-width: 720px) {
+  .ev { grid-template-columns: 70px minmax(0, 1fr); }
+  .modes { grid-column: 2; grid-template-columns: 62px 62px minmax(0, 1fr); margin-top: 4px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Black<span>mon</span></h1>
+    <div class="day"><button id="prev" aria-label="Previous day">&lsaquo;</button><span id="day"></span><button id="next" aria-label="Next day">&rsaquo;</button><button id="now">Today</button></div>
+  </header>
+  <div class="bar">
+    <span class="home" id="home"></span>
+    <label><input type="checkbox" id="mine"> Saved venues only</label>
+    <label><input type="checkbox" id="hidepast" checked> Hide started</label>
+    <span id="status"></span>
+  </div>
+  <div id="list"></div>
+  <div class="foot" id="foot"></div>
+</div>
+<script>
+const COLORS = {1:'#EE352E',2:'#EE352E',3:'#EE352E',4:'#00933C',5:'#00933C',6:'#00933C',7:'#B933AD',A:'#0039A6',C:'#0039A6',E:'#0039A6',
+  B:'#FF6319',D:'#FF6319',F:'#FF6319',M:'#FF6319',G:'#6CBE45',J:'#996633',Z:'#996633',L:'#A7A9AC',N:'#FCCC0A',Q:'#FCCC0A',R:'#FCCC0A',W:'#FCCC0A',S:'#808183',SIR:'#0039A6'};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+let date = new URLSearchParams(location.search).get('date') || null, doc = null, timer = null, editing = false;
+
+const fmtTime = t => { if (!t) return ''; let [h, m] = t.split(':').map(Number); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return `${h}:${String(m).padStart(2, '0')} ${ap}`; };
+const fmtHour = t => { let h = Number(t.slice(0, 2)); const ap = h >= 12 ? 'PM' : 'AM'; return `${h % 12 || 12} ${ap}`; };
+const fmtMin = m => m >= 60 ? `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}` : `${m} min`;
+
+function mode(k, v, detail, best, far, tip) {
+  return `<div class="mode${best ? ' best' : ''}${far ? ' far' : ''}" title="${esc(tip || '')}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${detail || ''}</div></div>`;
+}
+function modes(r) {
+  if (!r) return '<div class="modes"><div class="mode"><div class="k">routing</div><div class="v">&hellip;</div></div></div>';
+  if (r.error) return `<div class="modes"><div class="mode" title="${esc(r.error)}"><div class="k">route</div><div class="v">n/a</div></div></div>`;
+  const s = r.subway, w = r.walk, b = r.bike;
+  const best = Math.min(w ? w.min : 1e9, b ? b.min : 1e9, s ? s.min : 1e9);
+  const lines = s ? s.lines.map(l => `<span class="ln" style="background:${COLORS[l] || '#555'};${'NQRW'.includes(l) ? 'color:#000' : ''}">${esc(l)}</span>`).join('') : '';
+  const tip = s ? s.legs.map(l => `${l.line}: ${l.board} to ${l.alight}`).join('; ') + `. Walk ${s.walk_a} min to the train, ${s.walk_b} min after.` : w ? 'Walking is as fast or faster' : 'No subway route found';
+  const none = k => mode(k, '&ndash;', 'no land route', false, true, 'No route without a ferry');
+  return '<div class="modes">' +
+    (w ? mode('walk', fmtMin(w.min), `${w.mi} mi`, w.min === best, w.min > 45) : none('walk')) +
+    (b ? mode('bike', fmtMin(b.min), `${b.mi} mi`, b.min === best, false) : none('bike')) +
+    mode('subway', s ? fmtMin(s.min) + lines : '&ndash;', s ? esc(`${s.legs[0].board} \u2192 ${s.legs[s.legs.length - 1].alight}`) : w ? 'walk it' : '', s && s.min === best, false, tip) +
+    '</div>';
+}
+
+function render() {
+  if (!doc) return;
+  const d = parse(doc.date), isToday = doc.date === doc.today;
+  $('day').textContent = d.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'}) + (isToday ? ' · tonight' : '');
+  $('now').disabled = isToday;
+  $('prev').disabled = doc.date <= doc.today;
+  if (!editing) $('home').innerHTML = `from <b>${esc(doc.home.label.replace(/, NY, USA$/, ''))}</b> <button id="edit">change</button>`;
+  const now = new Date(), nowT = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+  let evs = doc.events.filter(e => !$('mine').checked || e.pinned);
+  const started = e => isToday && e.time && e.time < nowT && e.time >= '05:00';
+  const hidden = $('hidepast').checked ? evs.filter(started).length : 0;
+  if ($('hidepast').checked) evs = evs.filter(e => !started(e));
+  let html = '', hour = null;
+  for (const e of evs) {
+    const h = e.time ? fmtHour(e.time) : 'Time not listed';
+    if (h !== hour) { html += `<div class="hour">${h}</div>`; hour = h; }
+    const where = [e.street, e.city && e.city !== 'New York' ? e.city : ''].filter(Boolean).join(', ');
+    html += `<div class="ev${started(e) ? ' past' : ''}"><div class="t">${fmtTime(e.time) || '&ndash;'}</div>
+      <div><div class="title">${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title)}</a>` : esc(e.title)}${e.acts.length ? ` <span class="acts">with ${esc(e.acts.join(', '))}</span>` : ''}</div>
+      <div class="where"><b>${esc(e.venue)}</b>${e.pinned ? '<span class="pin">saved</span>' : ''}${where ? ' · ' + esc(where) : ''}</div></div>
+      ${modes(e.route)}</div>`;
+  }
+  if (!evs.length) html = `<div class="empty">${doc.fetching ? 'Pulling events…' : doc.fetch_error ? 'Could not pull events: ' + esc(doc.fetch_error) : 'Nothing listed' + (hidden ? ' that has not already started' : '') + '.'}</div>`;
+  $('list').innerHTML = html;
+  $('status').textContent = doc.fetching ? 'pulling events…' : doc.pending ? `routing ${doc.pending} venue${doc.pending > 1 ? 's' : ''}…` : '';
+  const bySrc = {};
+  for (const s of doc.sources) { const b = bySrc[s.source] ||= {n: 0, bad: false}; b.n += s.on_date || 0; b.bad ||= !s.ok; }
+  const src = Object.entries(bySrc).map(([k, v]) => `<span>${esc(k)} ${v.bad ? 'failed' : v.n}</span>`).join(' · ');
+  $('foot').innerHTML = `${evs.length} shown${hidden ? `, ${hidden} already started` : ''}. ` +
+    (doc.fetched_at ? `Pulled ${new Date(doc.fetched_at).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})} from: ${src}. ` : '') +
+    `Starter feed: concerts only, no theater, dance, opera, film or readings yet. Subway times are a ${esc(doc.profile.toLowerCase())}-evening timetable estimate, not live. <button id="refresh">Pull again</button>`;
+}
+
+async function load() {
+  clearTimeout(timer);
+  const r = await fetch('/api/events' + (date ? '?date=' + date : ''));
+  doc = await r.json();
+  date = doc.date;
+  render();
+  if (doc.pending || doc.fetching) timer = setTimeout(load, 1500);
+}
+function shift(n) { const d = parse(date); d.setDate(d.getDate() + n); date = iso(d); history.replaceState(null, '', '?date=' + date); load(); }
+
+document.addEventListener('click', async ev => {
+  const id = ev.target.id;
+  if (id === 'prev') shift(-1);
+  else if (id === 'next') shift(1);
+  else if (id === 'now') { date = null; history.replaceState(null, '', location.pathname); load(); }
+  else if (id === 'refresh') { await fetch('/api/refresh', {method: 'POST', body: JSON.stringify({date})}); load(); }
+  else if (id === 'edit') {
+    editing = true;
+    $('home').innerHTML = `from <input id="addr" value="${esc(doc.home.address)}" aria-label="Home address"> <button id="save">save</button> <button id="cancel">cancel</button> <span class="err" id="herr"></span>`;
+    $('addr').focus(); $('addr').select();
+  }
+  else if (id === 'cancel') { editing = false; render(); }
+  else if (id === 'save') saveHome();
+});
+document.addEventListener('keydown', ev => { if (ev.target.id === 'addr') { if (ev.key === 'Enter') saveHome(); if (ev.key === 'Escape') { editing = false; render(); } } });
+async function saveHome() {
+  $('herr').textContent = 'looking up…';
+  const r = await fetch('/api/home', {method: 'POST', body: JSON.stringify({address: $('addr').value})});
+  const j = await r.json();
+  if (!r.ok) { $('herr').textContent = j.error; return; }
+  editing = false; load();
+}
+$('mine').onchange = $('hidepast').onchange = render;
+load();
+</script>
+</body>
+</html>

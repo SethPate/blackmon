@@ -1,0 +1,6 @@
+__pycache__/
+cache/
+data/
+out/
+config.json
+*.tmp
