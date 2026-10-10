@@ -75,10 +75,12 @@ def hand_kept(date):
     iso, out = date.isoformat(), []
     base = dict(pinned=False, acts=[], until=None)
     for a in almanac():
-        if a['start'] <= iso <= a['end']:
+        long_run = (datetime.date.fromisoformat(a['end']) - datetime.date.fromisoformat(a['start'])).days > 7
+        if a['start'] <= iso <= a['end'] and (not long_run or iso in (a['start'], a['end'])):   # a long run: its first and last day
             out.append(dict(base, title=a['title'], time=a.get('time'), venue=a.get('venue') or '', street=a.get('street') or '',
                             city=a.get('city') or '', url=a.get('url'), source='Almanac', kind='big day',
-                            note=a.get('note'), lat=a.get('lat'), lon=a.get('lon')))
+                            note=' '.join(x for x in (long_run and ('Opens today.' if iso == a['start'] else 'Last day.'), a.get('note')) if x) or None,
+                            lat=a.get('lat'), lon=a.get('lon')))
     for s in _load('standing.json'):
         if s.get('valid_from', '') > iso:
             continue
@@ -178,7 +180,7 @@ def skint_rows(path, date, known):
     return out
 
 
-def coming_up(today, n=10):
+def coming_up(today, n=15):
     """The next big days, for the page's side rail."""
     rows = sorted((a for a in almanac() if a['end'] >= today.isoformat()), key=lambda a: a['start'])
     return dict(as_of=today.isoformat(), items=[{k: a.get(k) for k in ('title', 'start', 'end', 'venue', 'url', 'note')}
