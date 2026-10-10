@@ -13,6 +13,8 @@ house that sells through it:
   TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows)
   BAM          its own calendar feed, which includes the cinemas
   and three single houses: Wonderville, the Village Vanguard, NYC Next Level (fighting-game weeklies)
+  Screen Slate  repertory and arthouse cinema listings, kept to a short list of houses
+  Fandango      one multiplex, the Regal at Kaufman Astoria
 
 collect(dates) fetches each source once for the whole date range and returns events grouped by day, plus a
 report line per source and day so a source that silently returns nothing is visible on the page.
@@ -47,6 +49,22 @@ PLACES = {
     'wonderville': ('Wonderville', '1186 Broadway', 'Brooklyn', 40.69189, -73.92808),
     'vanguard': ('Village Vanguard', '178 Seventh Ave. South', 'Manhattan', 40.73604, -74.00162),
 }
+# Cinemas read from Screen Slate, by the name it uses for each. A short list on purpose: the houses the city is
+# known for, not every screen. BAM is left out here because its own feed above already covers it.
+CINEMAS = {
+    'Film Forum': ('Film Forum', '209 W. Houston St.', 'Manhattan', 40.72822, -74.00449),
+    'Metrograph': ('Metrograph', '7 Ludlow St.', 'Manhattan', 40.71511, -73.99117),
+    'IFC Center': ('IFC Center', '323 Sixth Ave.', 'Manhattan', 40.73123, -74.00167),
+    'Film at Lincoln Center': ('Film at Lincoln Center', '165 W. 65th St.', 'Manhattan', 40.77426, -73.98426),
+    'Anthology Film Archives': ('Anthology Film Archives', '32 Second Ave.', 'Manhattan', 40.72468, -73.99012),
+    'Paris Theater': ('Paris Theater', '4 W. 58th St.', 'Manhattan', 40.76375, -73.97432),
+    'Museum of Modern Art': ('Museum of Modern Art', '11 W. 53rd St.', 'Manhattan', 40.76119, -73.97701),
+    'Museum of the Moving Image': ('Museum of the Moving Image', '36-01 35th Ave.', 'Queens', 40.75630, -73.92392),
+    'Nitehawk Cinema Williamsburg': ('Nitehawk Williamsburg', '136 Metropolitan Ave.', 'Brooklyn', 40.71599, -73.96259),
+    'Nitehawk Cinema Prospect Park': ('Nitehawk Prospect Park', '188 Prospect Park West', 'Brooklyn', 40.66163, -73.97985),
+    'Spectacle': ('Spectacle', '124 S. 3rd St.', 'Brooklyn', 40.71248, -73.96285),
+}
+REGAL_ASTORIA = ('Regal UA Kaufman Astoria', '35-30 38th St.', 'Queens', 40.75426, -73.92416)
 OVATION = [('lamama', 42, 'theater'), ('psny', 203, 'theater'), ('abrons', 209, 'theater'), ('starr', 34289, 'theater'),
            ('brick', 122, 'theater'), ('danspace', 2742, 'dance'), ('roulette', 36368, 'music'), ('dixon', 35526, 'theater'),
            ('nuyorican', 35133, 'talk')]
@@ -81,9 +99,9 @@ def kind_of(text, default):
     return next((k for w, k in GENRE_WORDS if w in t), default)
 
 
-def event(place, title, date, time, url, source, kind, acts=()):
+def event(place, title, date, time, url, source, kind, acts=(), note=None):
     name, street, city, lat, lon = place
-    return dict(title=clean(title), date=date, time=time or None, venue=name, street=street, city=city, lat=lat,
+    return dict(note=clean(note) or None, title=clean(title), date=date, time=time or None, venue=name, street=street, city=city, lat=lat,
                 lon=lon, acts=[clean(a) for a in acts if a and clean(a)][:3], url=url, source=source, kind=kind)
 
 
@@ -181,6 +199,63 @@ def startgg(d0, d1):
         return {'NYC Next Level': evs}
     except Exception as ex:
         return {'NYC Next Level': ex}
+
+
+def _days(d0, d1):
+    a, b = datetime.date.fromisoformat(d0), datetime.date.fromisoformat(d1)
+    return [(a + datetime.timedelta(days=i)).isoformat() for i in range((b - a).days + 1)]
+
+
+def screenslate(d0, d1):
+    """Repertory and arthouse screenings from Screen Slate's daily listings, kept to the cinemas in CINEMAS."""
+    try:
+        evs, total = [], 0
+        for day in _days(d0, d1):
+            slots = json.loads(get(f"https://www.screenslate.com/api/screenings/date?_format=json&date={day.replace('-', '')}&field_city_target_id=10969"))
+            when = {x['nid']: x for x in slots}
+            ids = list(when)
+            total += len(ids)
+            for i in range(0, len(ids), 40):
+                got = json.loads(get('https://www.screenslate.com/api/screenings/id/' + '+'.join(ids[i:i + 40]) + '?_format=json'))
+                for it in (got.values() if isinstance(got, dict) else got):
+                    place = CINEMAS.get(clean(it.get('venue_title')))
+                    slot = when.get(it.get('nid'))
+                    if not place or not slot:
+                        continue
+                    t = slot.get('field_timestamp') or ''
+                    title = clean(it.get('field_display_title')) or clean(it.get('media_title_labels')) or \
+                        re.sub(r'\s+at\s+\S.*$', '', clean(it.get('title')))
+                    info = ' · '.join(x for x in (clean(y) for y in re.findall(r'<span>(.*?)</span>', it.get('media_title_info') or '', re.S)) if x)
+                    note = ' · '.join(x for x in (info, clean(it.get('field_series')), clean(slot.get('field_note'))) if x)
+                    url = it.get('field_url') if str(it.get('field_url') or '').startswith('http') else 'https://www.screenslate.com/'
+                    evs.append(event(place, title, t[:10] or day, t[11:16], url, 'Screen Slate', 'film', note=note))
+        return {'Screen Slate': Found(evs, total)}
+    except Exception as ex:
+        return {'Screen Slate': ex}
+
+
+def regal_astoria(d0, d1):
+    """The Regal at Kaufman Astoria Studios. Regal's own site refuses automated requests, so this reads the
+    same showtimes from Fandango's theater page data."""
+    try:
+        evs = []
+        for day in _days(d0, d1):
+            d = json.loads(get(f'https://www.fandango.com/napi/theaterMovieShowtimes/AAPOT?startDate={day}&isdesktop=true',
+                               {'Referer': 'https://www.fandango.com/regal-ua-kaufman-astoria-aapot/theater-page'}))['viewModel']
+            for m in d.get('movies') or []:
+                title = re.sub(r'\s*\((?:19|20)\d\d\)\s*$', '', m.get('title') or '')
+                url = 'https://www.fandango.com' + m['mopURI'] if (m.get('mopURI') or '').startswith('/') else 'https://www.fandango.com/regal-ua-kaufman-astoria-aapot/theater-page'
+                for v in m.get('variants') or []:
+                    fmt = clean(v.get('format') or v.get('formatName') or '')
+                    for g in v.get('amenityGroups') or []:
+                        for st in g.get('showtimes') or []:
+                            td = st.get('ticketingDate') or ''
+                            if len(td) >= 16 and td[:10] == day:
+                                evs.append(event(REGAL_ASTORIA, title, td[:10], td[11:16], url, 'Fandango', 'film',
+                                                 note=fmt if fmt and fmt.lower() != 'standard' else None))
+        return {'Regal Astoria (Fandango)': evs}
+    except Exception as ex:
+        return {'Regal Astoria (Fandango)': ex}
 
 
 MONTHS = {m: i + 1 for i, m in enumerate(['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
@@ -360,8 +435,8 @@ def collect(dates):
     days = sorted(d.isoformat() for d in dates)
     d0, d1 = days[0], days[-1]
     results = {}
-    with ThreadPoolExecutor(7) as ex:
-        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, bam, todaytix, wonderville, startgg, vanguard)):
+    with ThreadPoolExecutor(9) as ex:
+        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, bam, todaytix, wonderville, startgg, vanguard, screenslate, regal_astoria)):
             results.update(r)
     events, report = {d: [] for d in days}, {d: [] for d in days}
     for name, got in results.items():
