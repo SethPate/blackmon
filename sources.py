@@ -147,14 +147,14 @@ class Found(list):
 def wonderville(d0, d1):
     place = PLACES['wonderville']
     try:
-        d = json.loads(get('https://wonderville.nyc/events?format=json'))
+        d = json.loads(get('https://www.wonderville.nyc/events?format=json'))
         evs = []
         for e in d.get('upcoming') or []:
             if not e.get('startDate'):
                 continue
             t = datetime.datetime.fromtimestamp(e['startDate'] / 1000, NY)
             evs.append(event(place, e.get('title'), t.date().isoformat(), t.strftime('%H:%M'),
-                             'https://wonderville.nyc' + (e.get('fullUrl') or '/events'), 'Wonderville', 'other'))
+                             'https://www.wonderville.nyc' + (e.get('fullUrl') or '/events'), 'Wonderville', 'other'))
         return {'Wonderville': evs}
     except Exception as ex:
         return {'Wonderville': ex}
