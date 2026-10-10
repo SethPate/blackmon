@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One unattended pull: listings plus travel times from a home address, written as JSON documents.
 
-    python3 cloud.py --home "ADDRESS" [--out DIR] [YYYY-MM-DD ...]      default dates: today and tomorrow (New York)
+    python3 cloud.py --home "ADDRESS" [--out DIR] [--skint FILE] [--found FILE] [YYYY-MM-DD ...]      default dates: today and tomorrow (New York)
 
 Writes DIR/home.json, DIR/almanac.json (the next big days), DIR/days/<date>.json (the listings) and
 DIR/routes/<date>.json (travel times by venue). Whatever runs this (a scheduled Claude session) copies those into
@@ -27,12 +27,54 @@ def _load(name):
         return []
 
 
+FOUND = dict(items=[], dropped=[])
+
+
+def load_found(path):
+    """Read what the monthly lookout found (the page database's config/found document, saved to a file) and
+    place any entry that came without coordinates. A missing or unreadable file just means nothing was found."""
+    try:
+        d = json.load(open(path))
+    except (OSError, ValueError, TypeError):
+        return
+    if isinstance(d.get('data'), dict) and 'items' not in d:
+        d = d['data']
+    items, base = [], {fetch.norm(a['title']): a for a in _load('almanac.json')}
+    for a in d.get('items') or []:
+        if not (isinstance(a, dict) and a.get('title') and re.fullmatch(r'\d{4}-\d\d-\d\d', str(a.get('start') or ''))):
+            continue
+        a = dict(a, end=a['end'] if re.fullmatch(r'\d{4}-\d\d-\d\d', str(a.get('end') or '')) else a['start'])
+        old = base.get(fetch.norm(a['title']))
+        if a.get('lat') is None and old and fetch.norm(old.get('venue') or '') == fetch.norm(a.get('venue') or ''):
+            a.update(lat=old.get('lat'), lon=old.get('lon'))                # same event, same place: keep its pin
+        if a.get('lat') is None and a.get('city') in BOROUGHS:
+            g = routes.geocode(f"{a['street']}, {a['city']}") if a.get('street') else None
+            if g:
+                a.update(lat=g['lat'], lon=g['lon'])
+            elif a.get('venue'):
+                hit = find_venue(a['venue'], a['city'])
+                if hit:
+                    a.update(lat=hit[1], lon=hit[2])
+        items.append(a)
+    FOUND.update(items=items, dropped=[t for t in d.get('dropped') or [] if isinstance(t, str)])
+
+
+def almanac():
+    """The big days: almanac.json, with the lookout's entries replacing any of the same title, less what it
+    found cancelled."""
+    out = {fetch.norm(a['title']): a for a in _load('almanac.json')}
+    out.update({fetch.norm(a['title']): a for a in FOUND['items']})
+    for t in FOUND['dropped']:
+        out.pop(fetch.norm(t), None)
+    return list(out.values())
+
+
 def hand_kept(date):
     """Rows that come from the two hand-kept files rather than a feed: almanac.json (big dated city events) and
     standing.json (things that are simply there on certain weekdays: a museum's late night, rush tickets, a bar)."""
     iso, out = date.isoformat(), []
     base = dict(pinned=False, acts=[], until=None)
-    for a in _load('almanac.json'):
+    for a in almanac():
         if a['start'] <= iso <= a['end']:
             out.append(dict(base, title=a['title'], time=a.get('time'), venue=a.get('venue') or '', street=a.get('street') or '',
                             city=a.get('city') or '', url=a.get('url'), source='Almanac', kind='big day',
@@ -138,7 +180,7 @@ def skint_rows(path, date, known):
 
 def coming_up(today, n=10):
     """The next big days, for the page's side rail."""
-    rows = sorted((a for a in _load('almanac.json') if a['end'] >= today.isoformat()), key=lambda a: a['start'])
+    rows = sorted((a for a in almanac() if a['end'] >= today.isoformat()), key=lambda a: a['start'])
     return dict(as_of=today.isoformat(), items=[{k: a.get(k) for k in ('title', 'start', 'end', 'venue', 'url', 'note')}
                                                 for a in rows[:n]])
 
@@ -188,11 +230,14 @@ def main():
     ap.add_argument('--home', required=True)
     ap.add_argument('--out', default='out')
     ap.add_argument('--skint', help='JSON file of entries read from the Skint (see skint.py)')
+    ap.add_argument('--found', help="JSON file: the page database's config/found document (the monthly lookout's big days)")
     ap.add_argument('dates', nargs='*')
     a = ap.parse_args()
     g = routes.geocode(a.home)
     if not g:
         sys.exit(f'could not find the home address in NYC: {a.home!r}')
+    if a.found:
+        load_found(a.found)
     home = dict(address=a.home, label=g['label'], lat=g['lat'], lon=g['lon'])
     t = fetch.today()
     dates = [datetime.date.fromisoformat(d) for d in a.dates] or [t, t + datetime.timedelta(days=1)]
