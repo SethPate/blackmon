@@ -12,6 +12,7 @@ house that sells through it:
   Spektrix     St. Ann's Warehouse, New York Theatre Workshop, PAC NYC, Soho Rep
   TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows)
   BAM          its own calendar feed, which includes the cinemas
+  DICE         Saint Vitus Bar, from the listing feed behind the show list on its own site
   and three single houses: Wonderville, the Village Vanguard, NYC Next Level (fighting-game weeklies)
   Screen Slate  repertory and arthouse cinema listings, kept to a short list of houses
   Fandango      one multiplex, the Regal at Kaufman Astoria
@@ -48,6 +49,7 @@ PLACES = {
     'nuyorican': None,           # the cafe is dark for renovation and its nights move around; each one is placed by its ticket page
     'wonderville': ('Wonderville', '1186 Broadway', 'Brooklyn', 40.69189, -73.92808),
     'vanguard': ('Village Vanguard', '178 Seventh Ave. South', 'Manhattan', 40.73604, -74.00162),
+    'vitus':    ('Saint Vitus Bar', '428 Troutman St.', 'Brooklyn', 40.70716, -73.92200),
 }
 # Cinemas read from Screen Slate, by the name it uses for each. A short list on purpose: the houses the city is
 # known for, not every screen. BAM is left out here because its own feed above already covers it.
@@ -73,6 +75,10 @@ SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://s
             ('nytw', 'https://tickets.nytw.org/newyorktheatreworkshop', 'https://www.nytw.org/'),
             ('pac', 'https://tickets.pacnyc.org/pacnyc', 'https://pacnyc.org/whats-on/'),
             ('sohorep', 'https://system.spektrix.com/sohorep', 'https://sohorep.org/')]
+# place key, source name, and the partner key and promoter names the house's own page hands to DICE's list widget
+DICE = [('vitus', 'Saint Vitus', '1RsJ9u1HnFaj5F5hqFD7F9Idwsqi0o4z7QMQ2uGw',
+         ['Saint Vitus LLC (dba Saint Vitus Bar)', 'SV Cathedral LLC'])]
+DICE_KINDS = [('music', 'music'), ('theatre', 'theater'), ('film', 'film'), ('comedy', 'comedy'), ('talk', 'talk')]
 TT_KINDS = {'Plays': 'theater', 'Musicals': 'theater', 'Opera': 'opera', 'Dance': 'dance', 'Concerts': 'music',
             'Comedy Shows': 'comedy', 'Cabaret': 'music', 'Films': 'film', 'Immersive Experiences': 'theater',
             'Circus and Magic': 'theater', 'Conversations': 'talk', 'Events': 'other'}
@@ -199,6 +205,46 @@ def startgg(d0, d1):
         return {'NYC Next Level': evs}
     except Exception as ex:
         return {'NYC Next Level': ex}
+
+
+def dice(d0, d1):
+    """Houses that sell through DICE. The feed is the promoter's whole calendar, soonest first, and includes
+    nights it puts on in other rooms; only those at the house itself are kept, since the others reach the list
+    through their own venues."""
+    out = {}
+    for key, name, api_key, promoters in DICE:
+        place = PLACES[key]
+        try:
+            evs, total = [], 0
+            for page in range(1, 5):
+                q = urllib.parse.urlencode([('page[size]', 50), ('page[number]', page), ('types', 'linkout,event')] +
+                                           [('filter[promoters][]', p) for p in promoters])
+                data = json.loads(get('https://partners-endpoint.dice.fm/api/v2/events?' + q, {'x-api-key': api_key})).get('data') or []
+                total += len(data)
+                last = ''
+                for e in data:
+                    if not e.get('date'):
+                        continue
+                    t = datetime.datetime.fromisoformat(e['date'].replace('Z', '+00:00')).astimezone(NY)
+                    last = t.date().isoformat()
+                    loc = e.get('location') or {}
+                    if not (d0 <= last <= d1) or e.get('status') == 'cancelled' or loc.get('lat') is None \
+                            or routes.km(float(loc['lat']), float(loc['lng']), place[3], place[4]) > 0.15:
+                        continue
+                    # a bill is named "headliner, support, support"; anything else is a night with its own name
+                    parts = [p.strip() for p in (e.get('name') or '').split(', ')]
+                    artists = {(a or '').lower() for a in e.get('artists') or []}
+                    title, acts = (parts[0], parts[1:]) if len(parts) > 1 and re.sub(r'\s*\([^)]*\)$', '', parts[0]).lower() in artists else (e.get('name'), [])
+                    tags = ' '.join(e.get('type_tags') or [])
+                    evs.append(event(place, title, last, t.strftime('%H:%M'), e.get('url') or e.get('external_url'), name,
+                                     next((k for w, k in DICE_KINDS if w in tags), 'other'), acts,
+                                     'Sold out.' if e.get('sold_out') else None))
+                if len(data) < 50 or last > d1:
+                    break
+            out[name] = Found(evs, total)
+        except Exception as ex:
+            out[name] = ex
+    return out
 
 
 def _days(d0, d1):
@@ -435,8 +481,8 @@ def collect(dates):
     days = sorted(d.isoformat() for d in dates)
     d0, d1 = days[0], days[-1]
     results = {}
-    with ThreadPoolExecutor(9) as ex:
-        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, bam, todaytix, wonderville, startgg, vanguard, screenslate, regal_astoria)):
+    with ThreadPoolExecutor(10) as ex:
+        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, bam, todaytix, wonderville, startgg, vanguard, dice, screenslate, regal_astoria)):
             results.update(r)
     events, report = {d: [] for d in days}, {d: [] for d in days}
     for name, got in results.items():
