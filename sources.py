@@ -9,9 +9,11 @@ house that sells through it:
 
   OvationTix   La MaMa, Performance Space New York, Abrons, The Bushwick Starr, The Brick, Danspace Project,
                Roulette, Dixon Place, Nuyorican Poets Cafe, and the Off-Broadway rental houses SoHo Playhouse,
-               Theater for the New City, The Players Theatre, The Flea, Target Margin
+               Theater for the New City, The Players Theatre, The Flea, Target Margin, The Wild Project, WP Theater,
+               York Theatre, Baryshnikov Arts, New Ohio
   Spektrix     St. Ann's Warehouse, New York Theatre Workshop, PAC NYC, Soho Rep, 59E59, Irish Rep, Vineyard,
-               Atlantic, MCC
+               Atlantic, MCC, Signature, The New Group, Classic Stage, Theatre for a New Audience.
+               Always through system.spektrix.com: the cloud pull's network refuses houses' own tickets.* names.
   TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows).
                Only the shows whose producers list there: a rental house runs many more, hence the houses above.
   BAM          its own calendar feed, which includes the cinemas
@@ -58,6 +60,15 @@ PLACES = {
     'vineyard': ('Vineyard Theatre', '108 E. 15th St.', 'Manhattan', 40.73467, -73.98916),
     'atlantic': ('Atlantic Theater Company', '336 W. 20th St.', 'Manhattan', 40.74387, -74.00158),
     'mcc':      ('MCC Theater', '511 W. 52nd St.', 'Manhattan', 40.76661, -73.99124),
+    'signature': ('Signature Theatre', '480 W. 42nd St.', 'Manhattan', 40.75905, -73.99508),
+    'newgroup': ('The New Group', '480 W. 42nd St.', 'Manhattan', 40.75905, -73.99508),   # plays at the Signature Center
+    'csc':      ('Classic Stage Company', '136 E. 13th St.', 'Manhattan', 40.73265, -73.98838),
+    'tfana':    ('Theatre for a New Audience', '262 Ashland Pl.', 'Brooklyn', 40.68745, -73.97880),
+    'wild':     ('The Wild Project', '195 E. 3rd St.', 'Manhattan', 40.72306, -73.98328),
+    'wp':       ('WP Theater', '2162 Broadway', 'Manhattan', 40.78181, -73.98054),
+    'york':     ('York Theatre Company', '150 E. 76th St.', 'Manhattan', 40.77318, -73.96127),
+    'bac':      ('Baryshnikov Arts', '450 W. 37th St.', 'Manhattan', 40.75606, -73.99730),
+    'newohio':  ('New Ohio Theatre', '154 Christopher St.', 'Manhattan', 40.73226, -74.00817),
     'bam':      ('BAM', '30 Lafayette Ave.', 'Brooklyn', 40.68650, -73.97780),
     'nuyorican': None,           # the cafe is dark for renovation and its nights move around; each one is placed by its ticket page
     'wonderville': ('Wonderville', '1186 Broadway', 'Brooklyn', 40.69189, -73.92808),
@@ -83,7 +94,8 @@ REGAL_ASTORIA = ('Regal UA Kaufman Astoria', '35-30 38th St.', 'Queens', 40.7542
 OVATION = [('lamama', 42, 'theater'), ('psny', 203, 'theater'), ('abrons', 209, 'theater'), ('starr', 34289, 'theater'),
            ('brick', 122, 'theater'), ('danspace', 2742, 'dance'), ('roulette', 36368, 'music'), ('dixon', 35526, 'theater'),
            ('nuyorican', 35133, 'talk'), ('sohoph', 35583, 'theater'), ('tnc', 35441, 'theater'),
-           ('players', 277, 'theater'), ('flea', 14, 'theater'), ('tmargin', 282, 'theater')]
+           ('players', 277, 'theater'), ('flea', 14, 'theater'), ('tmargin', 282, 'theater'), ('wild', 621, 'theater'),
+           ('wp', 34655, 'theater'), ('york', 34375, 'theater'), ('bac', 31295, 'other'), ('newohio', 34708, 'theater')]
 OVATION_NAMES = {'nuyorican': 'Nuyorican Poets Cafe'}
 SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://stannswarehouse.org/'),
             ('nytw', 'https://tickets.nytw.org/newyorktheatreworkshop', 'https://www.nytw.org/'),
@@ -93,7 +105,11 @@ SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://s
             ('irishrep', 'https://system.spektrix.com/irishrep', 'https://irishrep.org/'),
             ('vineyard', 'https://system.spektrix.com/vineyardtheatre', 'https://vineyardtheatre.org/'),
             ('atlantic', 'https://system.spektrix.com/atlantictheatercompany', 'https://atlantictheater.org/'),
-            ('mcc', 'https://system.spektrix.com/mcc', 'https://mcctheater.org/')]
+            ('mcc', 'https://system.spektrix.com/mcc', 'https://mcctheater.org/'),
+            ('signature', 'https://system.spektrix.com/signaturetheatre', 'https://www.signaturetheatre.org/'),
+            ('newgroup', 'https://system.spektrix.com/thenewgroup', 'https://thenewgroup.org/'),
+            ('csc', 'https://system.spektrix.com/classicstage', 'https://www.classicstage.org/'),
+            ('tfana', 'https://system.spektrix.com/tfana', 'https://www.tfana.org/')]
 # place key, source name, and the partner key and promoter names the house's own page hands to DICE's list widget
 DICE = [('vitus', 'Saint Vitus', '1RsJ9u1HnFaj5F5hqFD7F9Idwsqi0o4z7QMQ2uGw',
          ['Saint Vitus LLC (dba Saint Vitus Bar)', 'SV Cathedral LLC'])]
@@ -386,7 +402,9 @@ def spektrix(d0, d1):
             evs = []
             for i in inst:
                 e = names.get((i.get('event') or {}).get('id'))
-                if not e or i.get('cancelled') or i.get('attribute_VirtualEvent'):
+                # a house hides its private nights (galas, patron nights) from its own site, and tests its site with fake events
+                if not e or i.get('cancelled') or i.get('attribute_VirtualEvent') or e.get('attribute_HideOnWeb') \
+                        or re.search(r'\[staging\]|\bwebsite test', e.get('name') or '', re.I):
                     continue
                 t = i.get('start') or ''
                 evs.append(event(place, e.get('name'), t[:10], t[11:16], e.get('webUrl') or site, place[0],
