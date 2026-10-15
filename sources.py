@@ -8,9 +8,12 @@ Most of these read a ticketing system rather than a venue's web page, because on
 house that sells through it:
 
   OvationTix   La MaMa, Performance Space New York, Abrons, The Bushwick Starr, The Brick, Danspace Project,
-               Roulette, Dixon Place, Nuyorican Poets Cafe
-  Spektrix     St. Ann's Warehouse, New York Theatre Workshop, PAC NYC, Soho Rep
-  TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows)
+               Roulette, Dixon Place, Nuyorican Poets Cafe, and the Off-Broadway rental houses SoHo Playhouse,
+               Theater for the New City, The Players Theatre, The Flea, Target Margin
+  Spektrix     St. Ann's Warehouse, New York Theatre Workshop, PAC NYC, Soho Rep, 59E59, Irish Rep, Vineyard,
+               Atlantic, MCC
+  TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows).
+               Only the shows whose producers list there: a rental house runs many more, hence the houses above.
   BAM          its own calendar feed, which includes the cinemas
   DICE         Saint Vitus Bar, from the listing feed behind the show list on its own site
   and three single houses: Wonderville, the Village Vanguard, NYC Next Level (fighting-game weeklies)
@@ -45,6 +48,16 @@ PLACES = {
     'nytw':     ('New York Theatre Workshop', '79 E. 4th St.', 'Manhattan', 40.72660, -73.99012),
     'pac':      ('PAC NYC', '251 Fulton St.', 'Manhattan', 40.71259, -74.01206),
     'sohorep':  ('Soho Rep', '416 W. 42nd St.', 'Manhattan', 40.75862, -73.99335),
+    'sohoph':   ('SoHo Playhouse', '15 Vandam St.', 'Manhattan', 40.72655, -74.00436),
+    'tnc':      ('Theater for the New City', '155 First Ave.', 'Manhattan', 40.72881, -73.98529),
+    'players':  ('The Players Theatre', '115 MacDougal St.', 'Manhattan', 40.73020, -74.00072),
+    'flea':     ('The Flea', '20 Thomas St.', 'Manhattan', 40.71607, -74.00603),
+    'tmargin':  ('Target Margin', '232 52nd St.', 'Brooklyn', 40.64727, -74.01738),
+    '59e59':    ('59E59 Theaters', '59 E. 59th St.', 'Manhattan', 40.76341, -73.97038),
+    'irishrep': ('Irish Repertory Theatre', '132 W. 22nd St.', 'Manhattan', 40.74263, -73.99477),
+    'vineyard': ('Vineyard Theatre', '108 E. 15th St.', 'Manhattan', 40.73467, -73.98916),
+    'atlantic': ('Atlantic Theater Company', '336 W. 20th St.', 'Manhattan', 40.74387, -74.00158),
+    'mcc':      ('MCC Theater', '511 W. 52nd St.', 'Manhattan', 40.76661, -73.99124),
     'bam':      ('BAM', '30 Lafayette Ave.', 'Brooklyn', 40.68650, -73.97780),
     'nuyorican': None,           # the cafe is dark for renovation and its nights move around; each one is placed by its ticket page
     'wonderville': ('Wonderville', '1186 Broadway', 'Brooklyn', 40.69189, -73.92808),
@@ -69,12 +82,18 @@ CINEMAS = {
 REGAL_ASTORIA = ('Regal UA Kaufman Astoria', '35-30 38th St.', 'Queens', 40.75426, -73.92416)
 OVATION = [('lamama', 42, 'theater'), ('psny', 203, 'theater'), ('abrons', 209, 'theater'), ('starr', 34289, 'theater'),
            ('brick', 122, 'theater'), ('danspace', 2742, 'dance'), ('roulette', 36368, 'music'), ('dixon', 35526, 'theater'),
-           ('nuyorican', 35133, 'talk')]
+           ('nuyorican', 35133, 'talk'), ('sohoph', 35583, 'theater'), ('tnc', 35441, 'theater'),
+           ('players', 277, 'theater'), ('flea', 14, 'theater'), ('tmargin', 282, 'theater')]
 OVATION_NAMES = {'nuyorican': 'Nuyorican Poets Cafe'}
 SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://stannswarehouse.org/'),
             ('nytw', 'https://tickets.nytw.org/newyorktheatreworkshop', 'https://www.nytw.org/'),
             ('pac', 'https://tickets.pacnyc.org/pacnyc', 'https://pacnyc.org/whats-on/'),
-            ('sohorep', 'https://system.spektrix.com/sohorep', 'https://sohorep.org/')]
+            ('sohorep', 'https://system.spektrix.com/sohorep', 'https://sohorep.org/'),
+            ('59e59', 'https://tickets.59e59.org/59e59', 'https://59e59.org/'),
+            ('irishrep', 'https://tickets.irishrep.org/irishrep', 'https://irishrep.org/'),
+            ('vineyard', 'https://tickets.vineyardtheatre.org/vineyardtheatre', 'https://vineyardtheatre.org/'),
+            ('atlantic', 'https://tickets.atlantictheater.org/atlantictheatercompany', 'https://atlantictheater.org/'),
+            ('mcc', 'https://tickets.mcctheater.org/mcc', 'https://mcctheater.org/')]
 # place key, source name, and the partner key and promoter names the house's own page hands to DICE's list widget
 DICE = [('vitus', 'Saint Vitus', '1RsJ9u1HnFaj5F5hqFD7F9Idwsqi0o4z7QMQ2uGw',
          ['Saint Vitus LLC (dba Saint Vitus Bar)', 'SV Cathedral LLC'])]
@@ -111,23 +130,29 @@ def event(place, title, date, time, url, source, kind, acts=(), note=None):
                 lon=lon, acts=[clean(a) for a in acts if a and clean(a)][:3], url=url, source=source, kind=kind)
 
 
-def ovation_room(client, production_id, default):
-    """Where one production plays, from its ticket page: several of these houses use more than one room, and
-    one of them has no home at the moment. Falls back to the house's own address."""
+def ovation_room(client, production_id, default, default_kind):
+    """(place, kind) for one production, from its ticket page. Place: several of these houses use more than one
+    room, and one of them has no home at the moment; falls back to the house's own address. Kind: the house's
+    default unless the description calls it stand-up or its maker a comedian, since the rental houses mix
+    comedians' hours in with plays and OvationTix has no genre."""
+    kind = default_kind
     try:
-        v = json.loads(get(f'https://web.ovationtix.com/trs/api/rest/Production({production_id})',
-                           {'clientId': str(client), 'newCIRequest': 'true'})).get('venue') or {}
+        prod = json.loads(get(f'https://web.ovationtix.com/trs/api/rest/Production({production_id})',
+                              {'clientId': str(client), 'newCIRequest': 'true'}))
+        if re.search(r'\bstand-?up\b|\bcomedians?\b', clean(prod.get('description')), re.I):
+            kind = 'comedy'
+        v = prod.get('venue') or {}
         a = v.get('address') or {}
         if re.search(r'online|zoom|virtual|livestream', f"{a.get('line1')} {v.get('name')}", re.I):
-            return None
+            return None, kind
         if a.get('line1'):
             g = routes.geocode(f"{a['line1']}, {a.get('city') or 'New York'}, NY {a.get('zipcode') or ''}")
             if g and (default is None or routes.km(g['lat'], g['lon'], default[3], default[4]) < 25):
                 city = 'Manhattan' if (a.get('city') or '').strip() == 'New York' else (a.get('city') or '').strip()
-                return (clean(v.get('name')) or (default and default[0]), a['line1'].strip(), city, g['lat'], g['lon'])
+                return (clean(v.get('name')) or (default and default[0]), a['line1'].strip(), city, g['lat'], g['lon']), kind
     except Exception:
         pass
-    return default
+    return default, kind
 
 
 def ovationtix(d0, d1):
@@ -152,9 +177,9 @@ def ovationtix(d0, d1):
                         found += 1
                         if d0 <= t[:10] <= d1:
                             rows.append((p.get('productionId'), name, t, p.get('subtitle')))
-            rooms = {pid: ovation_room(client, pid, house) for pid in {r[0] for r in rows}}
-            evs = [event(rooms[pid], name, t[:10], t[11:16], f'https://ci.ovationtix.com/{client}/production/{pid}',
-                         label, kind, [sub]) for pid, name, t, sub in rows if rooms[pid]]
+            rooms = {pid: ovation_room(client, pid, house, kind) for pid in {r[0] for r in rows}}
+            evs = [event(rooms[pid][0], name, t[:10], t[11:16], f'https://ci.ovationtix.com/{client}/production/{pid}',
+                         label, rooms[pid][1], [sub]) for pid, name, t, sub in rows if rooms[pid][0]]
             out[label] = Found(evs, found)
         except Exception as ex:
             out[label] = ex
