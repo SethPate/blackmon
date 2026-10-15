@@ -89,11 +89,11 @@ SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://s
             ('nytw', 'https://tickets.nytw.org/newyorktheatreworkshop', 'https://www.nytw.org/'),
             ('pac', 'https://tickets.pacnyc.org/pacnyc', 'https://pacnyc.org/whats-on/'),
             ('sohorep', 'https://system.spektrix.com/sohorep', 'https://sohorep.org/'),
-            ('59e59', 'https://tickets.59e59.org/59e59', 'https://59e59.org/'),
-            ('irishrep', 'https://tickets.irishrep.org/irishrep', 'https://irishrep.org/'),
-            ('vineyard', 'https://tickets.vineyardtheatre.org/vineyardtheatre', 'https://vineyardtheatre.org/'),
-            ('atlantic', 'https://tickets.atlantictheater.org/atlantictheatercompany', 'https://atlantictheater.org/'),
-            ('mcc', 'https://tickets.mcctheater.org/mcc', 'https://mcctheater.org/')]
+            ('59e59', 'https://system.spektrix.com/59e59', 'https://59e59.org/'),
+            ('irishrep', 'https://system.spektrix.com/irishrep', 'https://irishrep.org/'),
+            ('vineyard', 'https://system.spektrix.com/vineyardtheatre', 'https://vineyardtheatre.org/'),
+            ('atlantic', 'https://system.spektrix.com/atlantictheatercompany', 'https://atlantictheater.org/'),
+            ('mcc', 'https://system.spektrix.com/mcc', 'https://mcctheater.org/')]
 # place key, source name, and the partner key and promoter names the house's own page hands to DICE's list widget
 DICE = [('vitus', 'Saint Vitus', '1RsJ9u1HnFaj5F5hqFD7F9Idwsqi0o4z7QMQ2uGw',
          ['Saint Vitus LLC (dba Saint Vitus Bar)', 'SV Cathedral LLC'])]
