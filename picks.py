@@ -2,12 +2,13 @@
 """The day's picks: a short written plan for the day, drawn from the pulled listings and the quest list, with the
 weather in mind.
 
-    python3 picks.py list out 2026-10-17 [QUESTS_DIR]       print the weather, the day's events and the quests open
-                                                             that day as numbered one-line candidates
+    python3 picks.py list out 2026-10-17 [QUESTS_DIR]       print the weather, the owner's taste brief, the day's
+                                                             events and the quests open that day as numbered
+                                                             one-line candidates
     python3 picks.py build out 2026-10-17 CHOICES.json      write out/recs/2026-10-17.json
 
-QUESTS_DIR holds the page database's quests and questlog collections as saved files (QUESTS_DIR/quests/*.json,
-QUESTS_DIR/questlog/*.json). The choosing is done by whoever runs the pull (a scheduled Claude session). It writes
+QUESTS_DIR holds the page database's quests and questlog collections and its config/taste doc as saved files
+(QUESTS_DIR/quests/*.json, QUESTS_DIR/questlog/*.json, QUESTS_DIR/config/taste.json). The choosing is done by whoever runs the pull (a scheduled Claude session). It writes
 CHOICES.json as
 
     {"story": "paragraphs, separated by blank lines, naming each pick as [[the name as written|k]]",
@@ -129,6 +130,15 @@ def home(out):
         return None
 
 
+def taste(qdir):
+    """The owner's taste brief (config/taste in the page database, saved to QUESTS_DIR/config/taste.json), or ''."""
+    try:
+        with open(os.path.join(qdir or '', 'config', 'taste.json')) as f:
+            return (json.load(f).get('text') or '').strip()
+    except (OSError, ValueError, AttributeError):
+        return ''
+
+
 def candidates(out, date, qdir=None):
     day, venues = load(out, date)
     h = home(out)
@@ -136,6 +146,10 @@ def candidates(out, date, qdir=None):
     yield f"{WD[(d.weekday() + 1) % 7]} {date}{' (weekend: plan the day and the evening)' if d.weekday() >= 5 else ''}"
     w = weather(date)
     yield 'Weather: ' + (w['line'] if w else 'no forecast available')
+    yield ''
+    t = taste(qdir)
+    yield 'TASTE (the owner\'s own brief, written on the page)'
+    yield t or '(none written yet)'
     yield ''
     yield 'EVENTS'
     for n, e in enumerate(day['events']):
@@ -148,8 +162,6 @@ def candidates(out, date, qdir=None):
         bits.append('@ ' + e.get('venue', '') + (f" ({e['city']})" if e.get('city') else ''))
         if mins is not None:
             bits.append(f'{mins} min by {how}')
-        if e.get('pinned'):
-            bits.append('saved venue')
         if e.get('source') in ('the skint', 'Skint'):
             bits.append('via the Skint')
         if e.get('note'):
