@@ -10,14 +10,17 @@ house that sells through it:
   OvationTix   La MaMa, Performance Space New York, Abrons, The Bushwick Starr, The Brick, Danspace Project,
                Roulette, Dixon Place, Nuyorican Poets Cafe, and the Off-Broadway rental houses SoHo Playhouse,
                Theater for the New City, The Players Theatre, The Flea, Target Margin, The Wild Project, WP Theater,
-               York Theatre, Baryshnikov Arts, New Ohio
+               York Theatre, Baryshnikov Arts, New Ohio, Theater Lab, Rattlestick
   Spektrix     St. Ann's Warehouse, New York Theatre Workshop, PAC NYC, Soho Rep, 59E59, Irish Rep, Vineyard,
-               Atlantic, MCC, Signature, The New Group, Classic Stage, Theatre for a New Audience.
+               Atlantic, MCC, Signature, The New Group, Classic Stage, Theatre for a New Audience, The Tank,
+               Symphony Space. (Primary Stages plays 59E59 and comes in with it.)
                Always through system.spektrix.com: the cloud pull's network refuses houses' own tickets.* names.
-  Tessitura    Playwrights Horizons, Second Stage, Irish Arts Center, New Victory, through the calendar API behind
+  Tessitura    Playwrights Horizons, Second Stage, Irish Arts Center, New Victory, the Joyce, through the calendar API behind
                each house's TNEW ticket site (its own host name, so each needs a place on the cloud allowlist)
   TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows).
                Only the shows whose producers list there: a rental house runs many more, hence the houses above.
+  own sites    Roundabout (its WordPress feed), MTC and Lincoln Center Theater (their calendar pages), Ars Nova
+               (Playtime), Cherry Lane (vivenu), Chain Theatre (Squarespace), HERE (CueBox)
   BAM          its own calendar feed, which includes the cinemas
   DICE         Saint Vitus Bar, from the listing feed behind the show list on its own site
   and three single houses: Wonderville, the Village Vanguard, NYC Next Level (fighting-game weeklies)
@@ -76,6 +79,21 @@ PLACES = {
     'hayes':    ('Hayes Theater', '240 W. 44th St.', 'Manhattan', 40.75785, -73.98784),         # Second Stage's Broadway house
     'iac':      ('Irish Arts Center', '726 11th Ave.', 'Manhattan', 40.76661, -73.99363),
     'newvic':   ('New Victory Theater', '209 W. 42nd St.', 'Manhattan', 40.75653, -73.98747),
+    'joyce':    ('The Joyce', '175 Eighth Ave.', 'Manhattan', 40.74281, -74.00071),
+    'tank':     ('The Tank', '312 W. 36th St.', 'Manhattan', 40.75361, -73.99318),
+    'chain':    ('Chain Theatre', '312 W. 36th St., 4th fl.', 'Manhattan', 40.75361, -73.99318),
+    'symphony': ('Symphony Space', '2537 Broadway', 'Manhattan', 40.79396, -73.97266),
+    'theaterlab': ('Theater Lab', '357 W. 36th St., 3rd fl.', 'Manhattan', 40.75452, -73.99455),
+    'rattlestick': ('Rattlestick Theater', '224 Waverly Pl.', 'Manhattan', 40.73615, -74.00202),
+    'mtc':      ('Manhattan Theatre Club', '261 W. 47th St.', 'Manhattan', 40.76038, -73.98672),  # the Friedman
+    'mtc1':     ('MTC at City Center', '131 W. 55th St.', 'Manhattan', 40.76393, -73.97946),
+    'pels':     ('Laura Pels Theatre', '111 W. 46th St.', 'Manhattan', 40.75762, -73.98260),
+    'haimes':   ('Todd Haimes Theatre', '227 W. 42nd St.', 'Manhattan', 40.75715, -73.98811),
+    'studio54': ('Studio 54', '254 W. 54th St.', 'Manhattan', 40.76434, -73.98377),
+    'lct':      ('Lincoln Center Theater', '150 W. 65th St.', 'Manhattan', 40.77367, -73.98480),
+    'arsnova':  ('Ars Nova', '511 W. 54th St.', 'Manhattan', 40.76765, -73.99049),
+    'cherry':   ('Cherry Lane Theatre', '38 Commerce St.', 'Manhattan', 40.73124, -74.00528),
+    'here':     ('HERE', '145 Sixth Ave.', 'Manhattan', 40.72506, -74.00507),
     'bam':      ('BAM', '30 Lafayette Ave.', 'Brooklyn', 40.68650, -73.97780),
     'nuyorican': None,           # the cafe is dark for renovation and its nights move around; each one is placed by its ticket page
     'wonderville': ('Wonderville', '1186 Broadway', 'Brooklyn', 40.69189, -73.92808),
@@ -102,7 +120,8 @@ OVATION = [('lamama', 42, 'theater'), ('psny', 203, 'theater'), ('abrons', 209, 
            ('brick', 122, 'theater'), ('danspace', 2742, 'dance'), ('roulette', 36368, 'music'), ('dixon', 35526, 'theater'),
            ('nuyorican', 35133, 'talk'), ('sohoph', 35583, 'theater'), ('tnc', 35441, 'theater'),
            ('players', 277, 'theater'), ('flea', 14, 'theater'), ('tmargin', 282, 'theater'), ('wild', 621, 'theater'),
-           ('wp', 34655, 'theater'), ('york', 34375, 'theater'), ('bac', 31295, 'other'), ('newohio', 34708, 'theater')]
+           ('wp', 34655, 'theater'), ('york', 34375, 'theater'), ('bac', 31295, 'other'), ('newohio', 34708, 'theater'),
+           ('theaterlab', 28175, 'theater'), ('rattlestick', 34100, 'theater')]
 OVATION_NAMES = {'nuyorican': 'Nuyorican Poets Cafe'}
 SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://stannswarehouse.org/'),
             ('nytw', 'https://tickets.nytw.org/newyorktheatreworkshop', 'https://www.nytw.org/'),
@@ -116,15 +135,18 @@ SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://s
             ('signature', 'https://system.spektrix.com/signaturetheatre', 'https://www.signaturetheatre.org/'),
             ('newgroup', 'https://system.spektrix.com/thenewgroup', 'https://thenewgroup.org/'),
             ('csc', 'https://system.spektrix.com/classicstage', 'https://www.classicstage.org/'),
-            ('tfana', 'https://system.spektrix.com/tfana', 'https://www.tfana.org/')]
+            ('tfana', 'https://system.spektrix.com/tfana', 'https://www.tfana.org/'),
+            ('tank', 'https://system.spektrix.com/thetanknyc', 'https://thetanknyc.org/'),
+            ('symphony', 'https://system.spektrix.com/symphonyspace', 'https://www.symphonyspace.org/')]
 # Tessitura houses, read through the calendar API behind their TNEW ticket sites: place key, ticket host, default
 # kind, and (pattern, place key) rooms for a house with more than one stage, matched against the production's description
 TNEW = [('ph', 'my.playwrightshorizons.org', 'theater', []),
         ('2st', 'cart.2st.com', 'theater', [(r'\bBroadway\b', 'hayes')]),
         ('iac', 'tickets.irishartscenter.org', 'other', []),
-        ('newvic', 'tickets.newvictory.org', 'theater', [])]
+        ('newvic', 'tickets.newvictory.org', 'theater', []),
+        ('joyce', 'shop.joyce.org', 'dance', [])]
 # what a production is, from its title and description, for houses that sell more than plays. First match wins.
-TNEW_KINDS = [(r'\bin conversation\b|\breading\b|\bpoetry', 'talk'), (r'choreograph|\bdance', 'dance'),
+TNEW_KINDS = [(r'\bin conversation\b|\breading\b|\bpoetry', 'talk'), (r'choreograph|\bdance|ballet', 'dance'),
               (r'\bsessions?\b|\bfolk\b|\bconcert\b|\bband\b', 'music'), (r'\bcomed(y|ian)\b|\bstand-?up\b', 'comedy')]
 # not a show: gallery exhibitions sold as timed entry, classes
 TNEW_SKIP = r'\bexhibition\b|\binstallation\b|\bmaster ?class\b|\bworkshop\b|\bgift card|\bmembership\b'
@@ -136,7 +158,7 @@ TT_KINDS = {'Plays': 'theater', 'Musicals': 'theater', 'Opera': 'opera', 'Dance'
             'Comedy Shows': 'comedy', 'Cabaret': 'music', 'Films': 'film', 'Immersive Experiences': 'theater',
             'Circus and Magic': 'theater', 'Conversations': 'talk', 'Events': 'other'}
 GENRE_WORDS = [('film', 'film'), ('cinema', 'film'), ('opera', 'opera'), ('dance', 'dance'), ('ballet', 'dance'),
-               ('theat', 'theater'), ('music', 'music'), ('comedy', 'comedy'), ('talk', 'talk'), ('literary', 'talk')]
+               ('theat', 'theater'), ('music', 'music'), ('comedy', 'comedy'), ('improv', 'comedy'), ('talk', 'talk'), ('storytell', 'talk'), ('literary', 'talk')]
 
 
 def get(url, headers=None, timeout=30, data=None):
@@ -425,12 +447,13 @@ def spektrix(d0, d1):
             for i in inst:
                 e = names.get((i.get('event') or {}).get('id'))
                 # a house hides its private nights (galas, patron nights) from its own site, and tests its site with fake events
-                if not e or i.get('cancelled') or i.get('attribute_VirtualEvent') or e.get('attribute_HideOnWeb') \
+                if not e or i.get('cancelled') or i.get('attribute_VirtualEvent') or e.get('attribute_VirtualEvent') \
+                        or e.get('attribute_HideOnWeb') or e.get('attribute_SLExcludeFromViewEventsPage') \
                         or re.search(r'\[staging\]|\bwebsite test', e.get('name') or '', re.I):
                     continue
                 t = i.get('start') or ''
                 evs.append(event(place, e.get('name'), t[:10], t[11:16], e.get('webUrl') or site, place[0],
-                                 kind_of(e.get('attribute_Genre1'), 'theater')))
+                                 kind_of(e.get('attribute_Genre1') or e.get('attribute_Genre'), 'theater')))
             out[place[0]] = evs
         except Exception as ex:
             out[place[0]] = ex
@@ -452,7 +475,7 @@ def tnew(d0, d1):
                     continue
                 room = PLACES[next((k for pat, k in rooms if re.search(pat, desc)), key)]
                 kind = next((k for pat, k in TNEW_KINDS if re.search(pat, title + ' ' + desc, re.I)), default_kind) \
-                    if default_kind != 'theater' else default_kind
+                    if default_kind not in ('theater', 'dance') else default_kind
                 for perf in p.get('performances') or []:
                     t = perf.get('iso8601DateString') or ''   # local time, with its offset
                     if not perf.get('isPerformanceVisible', True) or not t[:10]:
@@ -464,6 +487,129 @@ def tnew(d0, d1):
         except Exception as ex:
             out[place[0]] = ex
     return out
+
+
+def local(t):
+    """(date, 'HH:MM') in New York for an ISO time with an offset or a Z, or epoch milliseconds."""
+    if isinstance(t, (int, float)):
+        d = datetime.datetime.fromtimestamp(t / 1000, NY)
+    else:
+        d = datetime.datetime.fromisoformat(t.replace('Z', '+00:00')).astimezone(NY)
+    return d.date().isoformat(), d.strftime('%H:%M')
+
+
+def roundabout(d0, d1):
+    rooms = {'Laura Pels Theatre': 'pels', 'Todd Haimes Theatre': 'haimes', 'Studio 54': 'studio54'}
+    for p in json.loads(get('https://www.roundabouttheatre.org/wp-json/roundabout/v1/performances/'))['performances']:
+        pr = p.get('production') or {}
+        yield event(PLACES[rooms.get(pr.get('theatreTitle'), 'pels')], pr.get('title'), p['date'][:10], p['date'][11:16],
+                    p.get('url') or pr.get('url'), 'Roundabout', 'theater')
+
+
+def mtc(d0, d1):
+    """MTC's own calendar page: one block per performance, its class naming the stage."""
+    page = get('https://www.manhattantheatreclub.com/our-season/calendar/')
+    for chunk in page.split('<span class="bg_event ')[1:]:
+        m = re.search(r'</span>\s*([A-Z][a-z]+ \d{1,2}, \d{4})\s*</h4>', chunk)
+        title = re.search(r'<p class="event">(.*?)</p>\s*<p class="hours">\s*(\d{1,2}:\d\d)\s*([ap]m)', chunk, re.S)
+        if not m or not title:
+            continue
+        day = datetime.datetime.strptime(m.group(1), '%B %d, %Y').date().isoformat()
+        hh, mm = map(int, title.group(2).split(':'))
+        hh = hh % 12 + (12 if title.group(3) == 'pm' else 0)
+        buy = re.search(r'class="buy_now" href="([^"]+)"', chunk) or re.search(r'class="learn_more" href="([^"]+)"', chunk)
+        yield event(PLACES['mtc1' if chunk.startswith('stage') else 'mtc'], title.group(1), day, f'{hh:02d}:{mm:02d}',
+                    buy.group(1) if buy else 'https://www.manhattantheatreclub.com/', 'Manhattan Theatre Club', 'theater')
+
+
+def lct(d0, d1):
+    """Lincoln Center Theater: each show's schedule page links every performance to Telecharge, the time in the link."""
+    page = get('https://www.lct.org/shows/')
+    slugs = sorted(set(re.findall(r'href="(?:https://www\.lct\.org)?/shows/([a-z][a-z0-9-]+)/"', page))
+                   - {'shows-archive', 'the-reading-series', 'people'})
+    for slug in slugs:
+        try:
+            sched = get(f'https://www.lct.org/shows/{slug}/schedule/')
+        except Exception:
+            continue          # a show without a schedule page yet
+        title = clean((re.search(r'<title>(.*?)</title>', sched, re.S) or [None, slug])[1]).split(' - Schedule')[0]
+        if title.isupper():
+            title = re.sub(r"\b(And|Of|The|A|An|In|With|For|To)\b", lambda m: m.group(1).lower(), title.title()).replace("'S", "'s")
+            title = title[:1].upper() + title[1:]
+        for url, mo, dd, yy, hh, mm, ap in set(re.findall(
+                r'href="(https://www\.telecharge\.com/[^"]*PerformanceDateTime=(\d{1,2})/(\d{1,2})/(\d{4})%20(\d{1,2}):(\d\d)([AP]M)[^"]*)"', sched)):
+            h = int(hh) % 12 + (12 if ap == 'PM' else 0)
+            yield event(PLACES['lct'], title, f'{yy}-{int(mo):02d}-{int(dd):02d}', f'{h:02d}:{mm}', html.unescape(url),
+                        'Lincoln Center Theater', 'theater')
+
+
+def arsnova(d0, d1):
+    for p in json.loads(get('https://api.arsnovanyc.playtime.world/api/v21/playtime/event/performances_anon?status=scheduled')):
+        e = p.get('event') or {}
+        day, t = local(p['start_date'])
+        title = (e.get('qed_model') or {}).get('title')
+        yield event(PLACES['arsnova'], title, day, t, f"https://arsnovanyc.playtime.world/event/{e.get('hashcode')}", 'Ars Nova',
+                    'comedy' if re.search(r'comedy|stand-?up', title or '', re.I) else 'theater')
+
+
+def cherrylane(d0, d1):
+    page = get('https://shows.cherrylanetheatre.org/')
+    data = json.loads(re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', page, re.S).group(1))
+    for e in data['props']['pageProps']['sellerPage']['events']:
+        day, t = local(e['start'])
+        yield event(PLACES['cherry'], e.get('name'), day, t, f"https://shows.cherrylanetheatre.org/event/{e.get('url')}",
+                    'Cherry Lane', 'film' if re.search(r'screening|\bfilm\b', e.get('name') or '', re.I) else 'theater')
+
+
+def chain(d0, d1):
+    url, stop = 'https://www.chaintheatre.org/whats-on?format=json', d1
+    for _ in range(6):
+        got = json.loads(get(url))
+        for e in got.get('upcoming') or []:
+            day, t = local(e['startDate'])
+            title = re.sub(r'^\s*RENTAL:\s*|\s*\((?:\d\w+|ground) floor\)\s*$', '', clean(e.get('title')), flags=re.I)
+            yield event(PLACES['chain'], title, day, t, 'https://www.chaintheatre.org' + (e.get('fullUrl') or '/whats-on'), 'Chain Theatre',
+                        'film' if re.search(r'\bfilm\b|screening', title, re.I) else 'theater')
+            if day > stop:
+                return
+        nxt = (got.get('pagination') or {}).get('nextPageUrl')
+        if not nxt:
+            return
+        url = 'https://www.chaintheatre.org' + nxt + '&format=json'
+
+
+def here(d0, d1):
+    """HERE sells through CueBox. The key is the public one CueBox's own ticket page sends."""
+    got = json.loads(get('https://api.getcuebox.com/connect/cuebox.services.consumer.v1.CueboxConsumerService/ListShows',
+                         data={'filter': 'LIST_SHOWS_FILTER_UPCOMING'},
+                         headers={'Connect-Protocol-Version': '1', 'Cuebox-Org-Id': 'CCTQ0T6B',
+                                  'Cuebox-Consumer-Api-Key': '1j0YyLEgz_Jho30m4-tn'}))
+    for show in got.get('shows') or []:
+        for r in show.get('showtimeTimeRanges') or []:
+            day, t = local(r['start'])
+            yield event(PLACES['here'], show.get('name'), day, t, f"https://here.app.getcuebox.com/o/CCTQ0T6B/shows/{show['id']}",
+                        'HERE', 'theater', note=show.get('subtitle'))
+
+
+OWN_SITES = [('Roundabout', roundabout), ('Manhattan Theatre Club', mtc), ('Lincoln Center Theater', lct), ('Ars Nova', arsnova),
+             ('Cherry Lane', cherrylane), ('Chain Theatre', chain), ('HERE', here)]
+
+
+def own_sites(d0, d1):
+    """Single houses read from their own sites, each a generator of events; kept to the dates asked, once each."""
+    def one(f):
+        try:
+            seen, evs = set(), []
+            for e in f(d0, d1):
+                k = (e['title'].lower(), e['date'], e['time'])
+                if d0 <= e['date'] <= d1 and e['title'] and k not in seen:
+                    seen.add(k)
+                    evs.append(e)
+            return evs
+        except Exception as ex:
+            return ex
+    with ThreadPoolExecutor(4) as ex:
+        return dict(zip((n for n, _ in OWN_SITES), ex.map(one, (f for _, f in OWN_SITES))))
 
 
 def tribe(d0, d1):
@@ -576,7 +722,7 @@ def collect(dates):
     d0, d1 = days[0], days[-1]
     results = {}
     with ThreadPoolExecutor(10) as ex:
-        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, tnew, bam, todaytix, wonderville, startgg, vanguard, dice, screenslate, regal_astoria)):
+        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, tnew, own_sites, bam, todaytix, wonderville, startgg, vanguard, dice, screenslate, regal_astoria)):
             results.update(r)
     events, report = {d: [] for d in days}, {d: [] for d in days}
     for name, got in results.items():
