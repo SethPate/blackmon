@@ -166,14 +166,15 @@ def fetch(date, extra=None, extra_report=None):
     rank = lambda e: 2 if e['source'] == 'TodayTix' else 1 if e['source'] == 'Songkick' else 0
     seen, out = {}, []
     for e in sorted(events, key=lambda e: (e['time'] or '99:99', rank(e), e['venue'])):
-        cell = (round(e['lat'] / 0.0015), round(e['lon'] / 0.002), e['time'])
-        same = [o for o in seen.get(cell, []) if o['source'] != e['source'] and
+        # same start time and within about 200 m (a fixed grid would split a building that straddles a cell edge)
+        near = [o for o in seen.get(e['time'], []) if routes.km(o['lat'], o['lon'], e['lat'], e['lon']) <= 0.2]
+        same = [o for o in near if o['source'] != e['source'] and
                 (norm(o['venue']) == norm(e['venue']) or norm(o['title'])[:8] == norm(e['title'])[:8])]
-        exact = [o for o in seen.get(cell, []) if o['source'] == e['source'] and norm(o['venue']) == norm(e['venue'])
+        exact = [o for o in near if o['source'] == e['source'] and norm(o['venue']) == norm(e['venue'])
                  and norm(o['title'])[:12] == norm(e['title'])[:12]]
         if same or exact:
             continue
-        seen.setdefault(cell, []).append(e)
+        seen.setdefault(e['time'], []).append(e)
         e['id'] = f"{e['date']}|{norm(e['venue'])}|{e['time'] or ''}|{norm(e['title'])[:24]}"
         del e['cancelled']
         out.append(e)
