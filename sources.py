@@ -22,6 +22,7 @@ house that sells through it:
   own sites    Roundabout (its WordPress feed), MTC and Lincoln Center Theater (their calendar pages), Ars Nova
                (Playtime), Cherry Lane (vivenu), Chain Theatre (Squarespace), HERE (CueBox), Ensemble Studio Theatre and
                New York Live Arts (Salesforce PatronManager), Japan Society (Ticketure), Pioneer Works (Sanity)
+  comedy.py    twenty-two comedy clubs and the comedy nights at mixed rooms (readers in comedy_feeds.py)
   BAM          its own calendar feed, which includes the cinemas
   DICE         Saint Vitus Bar, from the listing feed behind the show list on its own site
   and three single houses: Wonderville, the Village Vanguard, NYC Next Level (fighting-game weeklies)
@@ -763,10 +764,10 @@ def collect(dates):
     """dates: list of datetime.date. Returns ({iso date: [events]}, {iso date: [report entries]})."""
     days = sorted(d.isoformat() for d in dates)
     d0, d1 = days[0], days[-1]
-    import cinemas                      # here, not at the top: it reads this module's helpers
+    import cinemas, comedy              # here, not at the top: they read this module's helpers
     results = {}
     with ThreadPoolExecutor(10) as ex:
-        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, tnew, own_sites, bam, todaytix, wonderville, startgg, vanguard, dice, cinemas.screenings, regal_astoria)):
+        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, tnew, own_sites, bam, todaytix, wonderville, startgg, vanguard, dice, cinemas.screenings, comedy.shows, regal_astoria)):
             results.update(r)
     events, report = {d: [] for d in days}, {d: [] for d in days}
     for name, got in results.items():
