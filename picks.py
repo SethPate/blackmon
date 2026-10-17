@@ -130,10 +130,11 @@ def home(out):
         return None
 
 
-def taste(qdir):
-    """The owner's taste brief (config/taste in the page database, saved to QUESTS_DIR/config/taste.json), or ''."""
+def taste(qdir, name='taste'):
+    """The owner's taste brief (config/taste in the page database, saved to QUESTS_DIR/config/taste.json), or with
+    name='profile' their taste profile (config/profile); '' if there is none."""
     try:
-        with open(os.path.join(qdir or '', 'config', 'taste.json')) as f:
+        with open(os.path.join(qdir or '', 'config', name + '.json')) as f:
             return (json.load(f).get('text') or '').strip()
     except (OSError, ValueError, AttributeError):
         return ''
@@ -151,6 +152,11 @@ def candidates(out, date, qdir=None):
     yield 'TASTE (the owner\'s own brief, written on the page)'
     yield t or '(none written yet)'
     yield ''
+    p = taste(qdir, 'profile')
+    if p:
+        yield 'TASTE PROFILE (lanes, likes and dislikes, drawn from years of the owner\'s own ratings)'
+        yield p
+        yield ''
     yield 'EVENTS'
     for n, e in enumerate(day['events']):
         if e.get('kind') == 'standing':
@@ -226,10 +232,10 @@ def build(out, date, choices):
         if isinstance(n, int) and 0 <= n < len(day['events']) and day['events'][n].get('kind') != 'standing' and n not in seen and why:
             seen.add(n)
             e = day['events'][n]
-            picks.append(dict({k: e[k] for k in CARRY if k in e}, why=why[:240]))
+            picks.append(dict({k: e[k] for k in CARRY if k in e}, why=why[:360]))
         elif isinstance(q, str) and q in qall and q not in seen and why:
             seen.add(q)
-            picks.append(dict({k: qall[q][k] for k in QCARRY if qall[q].get(k)}, kind='quest', star=qall[q]['star'], why=why[:240]))
+            picks.append(dict({k: qall[q][k] for k in QCARRY if qall[q].get(k)}, kind='quest', star=qall[q]['star'], why=why[:360]))
         else:
             print('skipped', c, file=sys.stderr)
             continue
