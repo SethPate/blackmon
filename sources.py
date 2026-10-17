@@ -20,7 +20,8 @@ house that sells through it:
   TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows).
                Only the shows whose producers list there: a rental house runs many more, hence the houses above.
   own sites    Roundabout (its WordPress feed), MTC and Lincoln Center Theater (their calendar pages), Ars Nova
-               (Playtime), Cherry Lane (vivenu), Chain Theatre (Squarespace), HERE (CueBox)
+               (Playtime), Cherry Lane (vivenu), Chain Theatre (Squarespace), HERE (CueBox), Ensemble Studio Theatre and
+               New York Live Arts (Salesforce PatronManager), Japan Society (Ticketure), Pioneer Works (Sanity)
   BAM          its own calendar feed, which includes the cinemas
   DICE         Saint Vitus Bar, from the listing feed behind the show list on its own site
   and three single houses: Wonderville, the Village Vanguard, NYC Next Level (fighting-game weeklies)
@@ -94,6 +95,10 @@ PLACES = {
     'arsnova':  ('Ars Nova', '511 W. 54th St.', 'Manhattan', 40.76765, -73.99049),
     'cherry':   ('Cherry Lane Theatre', '38 Commerce St.', 'Manhattan', 40.73124, -74.00528),
     'here':     ('HERE', '145 Sixth Ave.', 'Manhattan', 40.72506, -74.00507),
+    'est':      ('Ensemble Studio Theatre', '545 W. 52nd St.', 'Manhattan', 40.76700, -73.99277),
+    'nyla':     ('New York Live Arts', '219 W. 19th St.', 'Manhattan', 40.74214, -73.99831),
+    'japansoc': ('Japan Society', '333 E. 47th St.', 'Manhattan', 40.75255, -73.96824),
+    'pioneer':  ('Pioneer Works', '159 Pioneer St.', 'Brooklyn', 40.67937, -74.01189),
     'bam':      ('BAM', '30 Lafayette Ave.', 'Brooklyn', 40.68650, -73.97780),
     'nuyorican': None,           # the cafe is dark for renovation and its nights move around; each one is placed by its ticket page
     'wonderville': ('Wonderville', '1186 Broadway', 'Brooklyn', 40.69189, -73.92808),
@@ -591,8 +596,70 @@ def here(d0, d1):
                         'HERE', 'theater', note=show.get('subtitle'))
 
 
+def patronmanager(key, host, default_kind):
+    """A house selling through Salesforce PatronManager: its public ticket page carries the keys for the remoting call
+    that lists every event and performance."""
+    import http.cookiejar
+    op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    base = f'https://{host}/ticket/'
+    page = op.open(urllib.request.Request(base, headers={'User-Agent': UA}), timeout=30).read().decode('utf-8', 'replace')
+    cfg = json.loads(re.search(r'RemotingProviderImpl\((\{.*?\})\)\);', page, re.S).group(1))
+    action, m = next((a, m) for a, v in cfg['actions'].items() for m in v['ms'] if m['name'] == 'fetchEvents')
+    body = {'action': action, 'method': 'fetchEvents', 'data': [base, '', '', None][:m['len']], 'type': 'rpc', 'tid': 2,
+            'ctx': {'csrf': m['csrf'], 'vid': cfg['vf']['vid'], 'ns': m['ns'], 'ver': int(m['ver']), 'authorization': m['authorization']}}
+    req = urllib.request.Request(f'https://{host}/ticket/apexremote', data=json.dumps(body).encode(), headers={
+        'User-Agent': UA, 'Content-Type': 'application/json', 'X-User-Agent': 'Visualforce-Remoting',
+        'X-Requested-With': 'XMLHttpRequest', 'Referer': base, 'Origin': f'https://{host}'})
+    got = json.loads(op.open(req, timeout=30).read())
+    for e in got[0].get('result') or []:
+        name = e.get('name') or ''
+        if re.search(TNEW_SKIP + r'|\bmemberfest\b|\bdonat', name, re.I):
+            continue
+        for i in e.get('instances') or []:
+            when = (i.get('formattedDates') or {}).get('ISO8601')
+            if when is None or i.get('nonTimed'):
+                continue
+            day, t = local(when)
+            yield event(PLACES[key], name, day, t, i.get('purchaseUrl') or e.get('purchaseUrl'), PLACES[key][0],
+                        kind_of(e.get('category'), default_kind))
+
+
+def japansociety(d0, d1):
+    """Japan Society's Ticketure box office, kept to its performing-arts programs (it also sells classes and exhibitions)."""
+    a = datetime.datetime.combine(datetime.date.fromisoformat(d0), datetime.time(), NY).astimezone(datetime.timezone.utc)
+    b = a + datetime.timedelta(days=(datetime.date.fromisoformat(d1) - datetime.date.fromisoformat(d0)).days + 1)
+    got = json.loads(get('https://boxoffice.japansociety.org/api/events/available?_embed=venue,event_session'
+                         f"&event_session.start_datetime._gte={a:%Y-%m-%dT%H:%M:%SZ}&event_session.start_datetime._lt={b:%Y-%m-%dT%H:%M:%SZ}"))
+    shows = {t['id']: t for t in got['event_template']['_data'] if t.get('category') in ('Performing Arts', 'Film')}
+    for sn in got['event_session']['_data']:
+        t = shows.get(sn['event_template_id'])
+        if t:
+            day, hm = local(sn['start_datetime'])
+            yield event(PLACES['japansoc'], t.get('name'), day, hm, f"https://boxoffice.japansociety.org/events/{t['id']}",
+                        'Japan Society', 'film' if t.get('category') == 'Film' else 'theater')
+
+
+def pioneerworks(d0, d1):
+    """Pioneer Works' programs, from the Sanity store behind its site. Open-gallery days are left out."""
+    q = ('*[_type=="program" && calendar.startDate<="%s" && coalesce(calendar.endDate, calendar.startDate)>="%s"]'
+         '{title, "slug": slug.current, calendar}' % (d1, d0))
+    for p in json.loads(get('https://vgvol637.apicdn.sanity.io/v2021-10-21/data/query/production?query=' + urllib.parse.quote(q)))['result']:
+        c = p.get('calendar') or {}
+        if c.get('range') == 'gallery' or not c.get('startDate'):
+            continue
+        first, last = datetime.date.fromisoformat(c['startDate']), datetime.date.fromisoformat(c.get('endDate') or c['startDate'])
+        title = p.get('title') or ''
+        kind = 'talk' if re.search(r'\btalk\b|conversation|lecture|reading|book', title, re.I) else kind_of(title, 'music')
+        for n in range(min((last - first).days, 14) + 1):
+            yield event(PLACES['pioneer'], title, (first + datetime.timedelta(days=n)).isoformat(), c.get('startTime'),
+                        f"https://pioneerworks.org/programs/{p.get('slug')}", 'Pioneer Works', kind)
+
+
 OWN_SITES = [('Roundabout', roundabout), ('Manhattan Theatre Club', mtc), ('Lincoln Center Theater', lct), ('Ars Nova', arsnova),
-             ('Cherry Lane', cherrylane), ('Chain Theatre', chain), ('HERE', here)]
+             ('Cherry Lane', cherrylane), ('Chain Theatre', chain), ('HERE', here),
+             ('Ensemble Studio Theatre', lambda a, b: patronmanager('est', 'ensemblestudiotheatre.my.salesforce-sites.com', 'theater')),
+             ('New York Live Arts', lambda a, b: patronmanager('nyla', 'newyorklivearts.my.salesforce-sites.com', 'dance')),
+             ('Japan Society', japansociety), ('Pioneer Works', pioneerworks)]
 
 
 def own_sites(d0, d1):
