@@ -23,7 +23,7 @@ house that sells through it:
                (Playtime), Cherry Lane (vivenu), Chain Theatre (Squarespace), HERE (CueBox), Ensemble Studio Theatre and
                New York Live Arts (Salesforce PatronManager), Japan Society (Ticketure), Pioneer Works (Sanity)
   comedy.py    twenty-two comedy clubs and the comedy nights at mixed rooms (readers in comedy_feeds.py)
-  talks.py     bookstore readings, library and Cooper Union talks, the Poetry Project, and gallery openings from
+  talks.py     bookstore readings, Cooper Union talks, the Poetry Project, and gallery openings from
                Artforum's artguide and Artsy (readers in talks_feeds.py), each placed by its own address
   BAM          its own calendar feed, which includes the cinemas
   DICE         Saint Vitus Bar, from the listing feed behind the show list on its own site

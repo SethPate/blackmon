@@ -4,7 +4,8 @@ city's geocoder, and says what kind of thing it is.
 
 Gallery openings come from two listings, Artforum's artguide and Artsy, which overlap; fetch.py's same-time,
 same-place check keeps one of each. Left out: the New School, NYPL, Center for Fiction and PEN (all behind bot
-checks), and Caveat's talks, which comedy.py already reads.
+checks), Brooklyn Public Library (it answers a home connection but refuses the cloud pull's), and Caveat's talks,
+which comedy.py already reads.
 
     python3 talks.py 2026-10-17
 """
@@ -23,7 +24,7 @@ READERS = [
     ('The Twisted Spine', F.twisted_spine, 'talk'), ('McNally Jackson', F.mcnally_jackson, 'talk'),
     ('Books Are Magic', F.books_are_magic, 'talk'), ('Community Bookstore', F.community_bookstore, 'talk'),
     ('Astoria Bookshop', F.astoria_bookshop, 'talk'), ('POWERHOUSE Arena', F.powerhouse_arena, 'talk'),
-    ('The Poetry Project', F.poetry_project, 'talk'), ('Brooklyn Public Library', F.brooklyn_public_library, 'talk'),
+    ('The Poetry Project', F.poetry_project, 'talk'),
     ('The Cooper Union', F.cooper_union, 'talk'),
 ]
 # not for an adult evening out: story times, kids' events, online-only, store business
