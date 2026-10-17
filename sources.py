@@ -14,6 +14,8 @@ house that sells through it:
   Spektrix     St. Ann's Warehouse, New York Theatre Workshop, PAC NYC, Soho Rep, 59E59, Irish Rep, Vineyard,
                Atlantic, MCC, Signature, The New Group, Classic Stage, Theatre for a New Audience.
                Always through system.spektrix.com: the cloud pull's network refuses houses' own tickets.* names.
+  Tessitura    Playwrights Horizons, Second Stage, Irish Arts Center, New Victory, through the calendar API behind
+               each house's TNEW ticket site (its own host name, so each needs a place on the cloud allowlist)
   TodayTix     Broadway and Off-Broadway plays and musicals, the Met, City Center and others (about 300 shows).
                Only the shows whose producers list there: a rental house runs many more, hence the houses above.
   BAM          its own calendar feed, which includes the cinemas
@@ -69,6 +71,11 @@ PLACES = {
     'york':     ('York Theatre Company', '150 E. 76th St.', 'Manhattan', 40.77318, -73.96127),
     'bac':      ('Baryshnikov Arts', '450 W. 37th St.', 'Manhattan', 40.75606, -73.99730),
     'newohio':  ('New Ohio Theatre', '154 Christopher St.', 'Manhattan', 40.73226, -74.00817),
+    'ph':       ('Playwrights Horizons', '416 W. 42nd St.', 'Manhattan', 40.75863, -73.99361),
+    '2st':      ('Second Stage', '305 W. 43rd St.', 'Manhattan', 40.75808, -73.98950),          # the Tony Kiser Theater
+    'hayes':    ('Hayes Theater', '240 W. 44th St.', 'Manhattan', 40.75785, -73.98784),         # Second Stage's Broadway house
+    'iac':      ('Irish Arts Center', '726 11th Ave.', 'Manhattan', 40.76661, -73.99363),
+    'newvic':   ('New Victory Theater', '209 W. 42nd St.', 'Manhattan', 40.75653, -73.98747),
     'bam':      ('BAM', '30 Lafayette Ave.', 'Brooklyn', 40.68650, -73.97780),
     'nuyorican': None,           # the cafe is dark for renovation and its nights move around; each one is placed by its ticket page
     'wonderville': ('Wonderville', '1186 Broadway', 'Brooklyn', 40.69189, -73.92808),
@@ -110,6 +117,17 @@ SPEKTRIX = [('stanns', 'https://system.spektrix.com/stannswarehouse', 'https://s
             ('newgroup', 'https://system.spektrix.com/thenewgroup', 'https://thenewgroup.org/'),
             ('csc', 'https://system.spektrix.com/classicstage', 'https://www.classicstage.org/'),
             ('tfana', 'https://system.spektrix.com/tfana', 'https://www.tfana.org/')]
+# Tessitura houses, read through the calendar API behind their TNEW ticket sites: place key, ticket host, default
+# kind, and (pattern, place key) rooms for a house with more than one stage, matched against the production's description
+TNEW = [('ph', 'my.playwrightshorizons.org', 'theater', []),
+        ('2st', 'cart.2st.com', 'theater', [(r'\bBroadway\b', 'hayes')]),
+        ('iac', 'tickets.irishartscenter.org', 'other', []),
+        ('newvic', 'tickets.newvictory.org', 'theater', [])]
+# what a production is, from its title and description, for houses that sell more than plays. First match wins.
+TNEW_KINDS = [(r'\bin conversation\b|\breading\b|\bpoetry', 'talk'), (r'choreograph|\bdance', 'dance'),
+              (r'\bsessions?\b|\bfolk\b|\bconcert\b|\bband\b', 'music'), (r'\bcomed(y|ian)\b|\bstand-?up\b', 'comedy')]
+# not a show: gallery exhibitions sold as timed entry, classes
+TNEW_SKIP = r'\bexhibition\b|\binstallation\b|\bmaster ?class\b|\bworkshop\b|\bgift card|\bmembership\b'
 # place key, source name, and the partner key and promoter names the house's own page hands to DICE's list widget
 DICE = [('vitus', 'Saint Vitus', '1RsJ9u1HnFaj5F5hqFD7F9Idwsqi0o4z7QMQ2uGw',
          ['Saint Vitus LLC (dba Saint Vitus Bar)', 'SV Cathedral LLC'])]
@@ -121,10 +139,14 @@ GENRE_WORDS = [('film', 'film'), ('cinema', 'film'), ('opera', 'opera'), ('dance
                ('theat', 'theater'), ('music', 'music'), ('comedy', 'comedy'), ('talk', 'talk'), ('literary', 'talk')]
 
 
-def get(url, headers=None, timeout=30):
+def get(url, headers=None, timeout=30, data=None):
+    """GET a page, or POST `data` (a dict, sent as JSON) to it."""
     h = {'User-Agent': UA, 'Accept-Encoding': 'gzip', 'Accept': 'application/json, text/html;q=0.9, */*;q=0.8'}
+    if data is not None:
+        h['Content-Type'] = 'application/json'
+        data = json.dumps(data).encode()
     h.update(headers or {})
-    with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=timeout) as r:
+    with urllib.request.urlopen(urllib.request.Request(url, data=data, headers=h), timeout=timeout) as r:
         body = r.read()
         if r.headers.get('Content-Encoding') == 'gzip':
             body = gzip.decompress(body)
@@ -415,6 +437,35 @@ def spektrix(d0, d1):
     return out
 
 
+def tnew(d0, d1):
+    out = {}
+    end = (datetime.date.fromisoformat(d1) + datetime.timedelta(days=1)).isoformat()
+    for key, host, default_kind, rooms in TNEW:
+        place = PLACES[key]
+        try:
+            got = json.loads(get(f'https://{host}/api/products/productionseasons', data={
+                'productionSeasonIdFilter': [], 'keywordIds': [], 'startDate': d0 + 'T00:00:00', 'endDate': end + 'T00:00:00'}))
+            evs = []
+            for p in got.get('productions') or []:
+                title, desc = p.get('productionTitle') or '', clean(p.get('description'))
+                if re.search(TNEW_SKIP, title + ' ' + desc, re.I):
+                    continue
+                room = PLACES[next((k for pat, k in rooms if re.search(pat, desc)), key)]
+                kind = next((k for pat, k in TNEW_KINDS if re.search(pat, title + ' ' + desc, re.I)), default_kind) \
+                    if default_kind != 'theater' else default_kind
+                for perf in p.get('performances') or []:
+                    t = perf.get('iso8601DateString') or ''   # local time, with its offset
+                    if not perf.get('isPerformanceVisible', True) or not t[:10]:
+                        continue
+                    evs.append(event(room, perf.get('performanceTitle') or title, t[:10], t[11:16],
+                                     perf.get('actionUrl') or p.get('productionSeasonActionUrl') or f'https://{host}/events',
+                                     place[0], kind))
+            out[place[0]] = evs
+        except Exception as ex:
+            out[place[0]] = ex
+    return out
+
+
 def tribe(d0, d1):
     out = {}
     for key, host in (('brick', 'www.bricktheater.com'),):
@@ -525,7 +576,7 @@ def collect(dates):
     d0, d1 = days[0], days[-1]
     results = {}
     with ThreadPoolExecutor(10) as ex:
-        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, bam, todaytix, wonderville, startgg, vanguard, dice, screenslate, regal_astoria)):
+        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, tnew, bam, todaytix, wonderville, startgg, vanguard, dice, screenslate, regal_astoria)):
             results.update(r)
     events, report = {d: [] for d in days}, {d: [] for d in days}
     for name, got in results.items():
