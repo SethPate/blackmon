@@ -50,14 +50,28 @@ def best(r):
 
 def weather(date):
     """The day's forecast for Manhattan in four parts (morning, afternoon, evening, night), or None if unavailable."""
-    try:
-        url = ('https://api.open-meteo.com/v1/forecast?latitude=40.73&longitude=-73.99&hourly=temperature_2m,'
-               'apparent_temperature,precipitation_probability,weather_code,wind_speed_10m&daily=sunset'
-               '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York&forecast_days=4')
-        with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'blackmon'}), timeout=20) as r:
-            d = json.load(r)
-    except Exception:
+    d = None
+    for attempt in range(3):                     # the service sometimes drops a request; try a few times
+        try:
+            d = _forecast()
+            break
+        except Exception:
+            import time
+            time.sleep(3)
+    if not d:
         return None
+    return _summarise(d, date)
+
+
+def _forecast():
+    url = ('https://api.open-meteo.com/v1/forecast?latitude=40.73&longitude=-73.99&hourly=temperature_2m,'
+           'apparent_temperature,precipitation_probability,weather_code,wind_speed_10m&daily=sunset'
+           '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York&forecast_days=4')
+    with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'blackmon'}), timeout=20) as r:
+        return json.load(r)
+
+
+def _summarise(d, date):
     h = d['hourly']
     rows = [i for i, t in enumerate(h['time']) if t.startswith(date)]
     if not rows:
