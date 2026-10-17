@@ -244,7 +244,8 @@ def ovationtix(d0, d1):
                             rows.append((p.get('productionId'), name, t, p.get('subtitle')))
             rooms = {pid: ovation_room(client, pid, house, kind) for pid in {r[0] for r in rows}}
             evs = [event(rooms[pid][0], name, t[:10], t[11:16], f'https://ci.ovationtix.com/{client}/production/{pid}',
-                         label, rooms[pid][1], [sub]) for pid, name, t, sub in rows if rooms[pid][0]]
+                         label, rooms[pid][1], note=None if re.search(r'click here|tickets?\b|^\s*$', sub or '', re.I) else sub)
+                   for pid, name, t, sub in rows if rooms[pid][0]]   # a subtitle is a credit line or a tagline, not a list of acts
             out[label] = Found(evs, found)
         except Exception as ex:
             out[label] = ex
