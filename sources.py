@@ -25,7 +25,7 @@ house that sells through it:
   BAM          its own calendar feed, which includes the cinemas
   DICE         Saint Vitus Bar, from the listing feed behind the show list on its own site
   and three single houses: Wonderville, the Village Vanguard, NYC Next Level (fighting-game weeklies)
-  Screen Slate  repertory and arthouse cinema listings, kept to a short list of houses
+  cinemas.py   repertory and arthouse cinemas, each from its own site (Screen Slate, which had them all, now blocks bots)
   Fandango      one multiplex, the Regal at Kaufman Astoria
 
 collect(dates) fetches each source once for the whole date range and returns events grouped by day, plus a
@@ -105,8 +105,8 @@ PLACES = {
     'vanguard': ('Village Vanguard', '178 Seventh Ave. South', 'Manhattan', 40.73604, -74.00162),
     'vitus':    ('Saint Vitus Bar', '428 Troutman St.', 'Brooklyn', 40.70716, -73.92200),
 }
-# Cinemas read from Screen Slate, by the name it uses for each. A short list on purpose: the houses the city is
-# known for, not every screen. BAM is left out here because its own feed above already covers it.
+# Cinemas read by cinemas.py, by name. A short list on purpose: the houses the city is known for, not every screen.
+# BAM is left out here because its own feed above already covers it.
 CINEMAS = {
     'Film Forum': ('Film Forum', '209 W. Houston St.', 'Manhattan', 40.72822, -74.00449),
     'Metrograph': ('Metrograph', '7 Ludlow St.', 'Manhattan', 40.71511, -73.99117),
@@ -341,34 +341,6 @@ def dice(d0, d1):
 def _days(d0, d1):
     a, b = datetime.date.fromisoformat(d0), datetime.date.fromisoformat(d1)
     return [(a + datetime.timedelta(days=i)).isoformat() for i in range((b - a).days + 1)]
-
-
-def screenslate(d0, d1):
-    """Repertory and arthouse screenings from Screen Slate's daily listings, kept to the cinemas in CINEMAS."""
-    try:
-        evs, total = [], 0
-        for day in _days(d0, d1):
-            slots = json.loads(get(f"https://www.screenslate.com/api/screenings/date?_format=json&date={day.replace('-', '')}&field_city_target_id=10969"))
-            when = {x['nid']: x for x in slots}
-            ids = list(when)
-            total += len(ids)
-            for i in range(0, len(ids), 40):
-                got = json.loads(get('https://www.screenslate.com/api/screenings/id/' + '+'.join(ids[i:i + 40]) + '?_format=json'))
-                for it in (got.values() if isinstance(got, dict) else got):
-                    place = CINEMAS.get(clean(it.get('venue_title')))
-                    slot = when.get(it.get('nid'))
-                    if not place or not slot:
-                        continue
-                    t = slot.get('field_timestamp') or ''
-                    title = clean(it.get('field_display_title')) or clean(it.get('media_title_labels')) or \
-                        re.sub(r'\s+at\s+\S.*$', '', clean(it.get('title')))
-                    info = ' · '.join(x for x in (clean(y) for y in re.findall(r'<span>(.*?)</span>', it.get('media_title_info') or '', re.S)) if x)
-                    note = ' · '.join(x for x in (info, clean(it.get('field_series')), clean(slot.get('field_note'))) if x)
-                    url = it.get('field_url') if str(it.get('field_url') or '').startswith('http') else 'https://www.screenslate.com/'
-                    evs.append(event(place, title, t[:10] or day, t[11:16], url, 'Screen Slate', 'film', note=note))
-        return {'Screen Slate': Found(evs, total)}
-    except Exception as ex:
-        return {'Screen Slate': ex}
 
 
 def regal_astoria(d0, d1):
@@ -788,9 +760,10 @@ def collect(dates):
     """dates: list of datetime.date. Returns ({iso date: [events]}, {iso date: [report entries]})."""
     days = sorted(d.isoformat() for d in dates)
     d0, d1 = days[0], days[-1]
+    import cinemas                      # here, not at the top: it reads this module's helpers
     results = {}
     with ThreadPoolExecutor(10) as ex:
-        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, tnew, own_sites, bam, todaytix, wonderville, startgg, vanguard, dice, screenslate, regal_astoria)):
+        for r in ex.map(lambda f: f(d0, d1), (ovationtix, spektrix, tnew, own_sites, bam, todaytix, wonderville, startgg, vanguard, dice, cinemas.screenings, regal_astoria)):
             results.update(r)
     events, report = {d: [] for d in days}, {d: [] for d in days}
     for name, got in results.items():
