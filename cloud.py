@@ -221,7 +221,12 @@ def day_docs(date, home, extra, extra_report, skint=None):
             if sub and walk and sub['min'] >= walk['min']:
                 sub = None
             venues[v] = dict(walk=walk, bike=r['bike'], subway=sub)
-        events.append(dict({k: e.get(k) for k in KEEP if e.get(k) not in (None, [], '')}, v=v))
+        # left out to keep a busy day under the store's 256 KiB: empty fields, pinned when false, and a source that is
+        # only the venue's own name (the page only shows a source when it is an aggregator)
+        row = {k: e.get(k) for k in KEEP if e.get(k) not in (None, [], '', False)}
+        if row.get('source') == row.get('venue'):
+            del row['source']
+        events.append(dict(row, v=v))
     day = dict(date=doc['date'], fetched_at=doc['fetched_at'], sources=doc['sources'], events=events,
                profile=profile, home_label=home['label'], route_error=route_error)
     return day, dict(date=doc['date'], profile=profile, venues=venues)
