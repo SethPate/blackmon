@@ -533,7 +533,10 @@ def arsnova(d0, d1):
 def cherrylane(d0, d1):
     page = get('https://shows.cherrylanetheatre.org/')
     data = json.loads(re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', page, re.S).group(1))
-    for e in data['props']['pageProps']['sellerPage']['events']:
+    shop = data['props']['pageProps'].get('sellerPage') or {}
+    if shop.get('events') is None:
+        raise RuntimeError('vivenu sent the page without its events (an outage on their side, as on 2026-10-16)')
+    for e in shop['events']:
         day, t = local(e['start'])
         yield event(PLACES['cherry'], e.get('name'), day, t, f"https://shows.cherrylanetheatre.org/event/{e.get('url')}",
                     'Cherry Lane', 'film' if re.search(r'screening|\bfilm\b', e.get('name') or '', re.I) else 'theater')
